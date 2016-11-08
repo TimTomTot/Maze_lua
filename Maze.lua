@@ -1,6 +1,9 @@
 local Room = require "Room" --комнаты для лабиринта
 local Conf = require "MazeConfig" --конфигурационный файл лабиринта 
 
+--функции работы с протолабиринтом
+local maze = require ("proto")
+
 -------------Лабиринт--------------
 --Лабиринт будет из себя представлять прямоугольную таблицу комнат
 local M = {}
@@ -133,17 +136,6 @@ function M:Show ()
 	
 end --Maze:Show
 
---создание нового лабиринта - по принципу инстанцирования в ООП
-function M:New ()
-	local m = {}
-	
-	setmetatable (m, self)
-	
-	self.__index = self
-	
-	return m
-end
-
 --есть ли проход между двумя локациями
 --передается координата текущел локации и смещение к локации, в которую надо пройти
 function M:IsGo (x_, y_, dx_, dy_)
@@ -188,21 +180,6 @@ function M:IsGo (x_, y_, dx_, dy_)
 	return rez
 end
 
---создание лабиринта-болванки для дальнейфей генерации
-function M:SetClearMaze (height_, width_)
-	self.colums, self.rows = width_, height_ 
-	
-	print ("self.colums: " .. tostring (self.colums) .. " self.rows: " .. tostring (self.rows))
-	
-	for i = 1, self.rows do
-		self[i] = {}
-		
-		for j = 1, self.colums do
-			self[i][j] = Room:New (1, 1)
-		end
-	end
-end
-
 --функция сносит стену между двумя локациями в лабиринте
 function M:BreakWall (x_, y_, dx_, dy_)
 	--print ("X: " .. tostring (x_ + dx_) .. " Y: " .. tostring (y_ + dy_))
@@ -226,6 +203,19 @@ function M:BreakWall (x_, y_, dx_, dy_)
 		self[x_][y_ + 1]:SetWalls (left, 0)
 	
 	end	
+end
+
+--
+
+--Функция генерации лабиринта заданого размера
+function M.Generate (xlen, ylen)
+	--сначала генерируется болванка с комнатами
+	--для этого нужно понять, сколько комнат нужно и какого размера будут эти комнаты
+	
+	--затем болванка преобразуется по правилам алгоритма Прима
+	
+	--В самом конце создается массив для результирующего лабиринта 
+	--и предстваление с комнатами преобразуется в понятное человеку
 end
 
 return M
