@@ -13,7 +13,7 @@ function M:Load (fileName_)
 	local fileIn = io.open (fileName_, "r")
 	
 	--прочитать размерность лабиринта 
-	self.colums, self.rows = fileIn:read ("*number", "*number")
+   self.colums, self.rows = fileIn:read ("*number", "*number")
 	
 	--прочитать данные для каждой комнаты лабиринта в соответствии с 
 	--полученным ранее размером
