@@ -89,6 +89,8 @@ function M:BreakWall (x_, y_, dx_, dy_)
 		self[x_][y_]:SetWalls (left, 0)
 				
 	elseif dy_ == 1 then
+      --print ("x_ + 1", x_ + 1)
+      --print ("y_", y_)
 		left, top =  self[x_ + 1][y_]:GetWall ()
 		self[x_ + 1][y_]:SetWalls (left, 0)
 	

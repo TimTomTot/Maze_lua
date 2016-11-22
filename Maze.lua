@@ -1,7 +1,8 @@
-local utils    = require ("lua_utils.maputils")
-local neig     = require ("lua_utils.neighborhood")
-local room     = require ("Room")
-local proto    = require ("proto")
+local utils       = require ("lua_utils.maputils")
+local neig        = require ("lua_utils.neighborhood")
+local room        = require ("Room")
+local proto       = require ("proto")
+local generator   = require ("Prim")
 
 -------------Лабиринт--------------
 
@@ -63,11 +64,19 @@ end --Extend
 function M.Generate (xlen, ylen)
 	--сначала генерируется болванка с комнатами
 	--для этого нужно понять, сколько комнат нужно и какого размера будут эти комнаты
+   
+   local protoMaze = proto:New (xlen, ylen)
 	
+   --print (#protoMaze)
+   
 	--затем болванка преобразуется по правилам алгоритма Прима
+   generator:Generation (protoMaze)
 	
 	--В самом конце создается массив для результирующего лабиринта 
+   local result = Extend (protoMaze)
+   
 	--и предстваление с комнатами преобразуется в понятное человеку
+   return result
 end
 
 return M
