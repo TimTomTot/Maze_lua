@@ -13,6 +13,7 @@ local neig     = require ("lua_utils.neighborhood")
 local M = {}
 
 --сила прототипного ООП - это наследование
+--наследуем от модуля для работы с матрицами
 setmetatable (M, {__index = matrix})
 
 --создать новый протолабиринт

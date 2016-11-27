@@ -3,7 +3,7 @@
 local R = {}
 
 --установить стены
-function R:SetWalls (leftWall_, topWall_)
+function R:SetWall (leftWall_, topWall_)
 	self.leftWall = leftWall_
 	self.topWall = topWall_
 end 
@@ -27,7 +27,7 @@ function R:New (leftWall_, topWall_)
 	--по умолчанию устанавливаем наличие обоих стен в комнате
 	local lWall, tWall = leftWall_ or 1, topWall_ or 1 
 	
-	o:SetWalls (lWall, tWall)
+	o:SetWall (lWall, tWall)
 	
 	return o
 end

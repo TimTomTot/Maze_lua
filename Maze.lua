@@ -3,8 +3,8 @@
 local matrix   = require ("lua_utils.matrix")
 local neig     = require ("lua_utils.neighborhood")
 local room     = require ("Room")
-local proto    = require ("Proto2")
-local PrimGen  = require ("Prim2")
+local proto    = require ("Proto")
+local PrimGen  = require ("Generator")
 
 local M = {}
 
@@ -54,51 +54,47 @@ end
 
 --генерировать лабиринт - главная функция свех ближайших модулей
 function M:Generate (lenN, lenM)
-   --на вход функции передается размер конечного лабиринта
-   --исходя из него устанавливаются размеры комнат (вертикальные и горизонтальные)
-   --определяем, четный или нечетный размер передается
-   local modN, modM = math.fmod (lenN, 2), math.fmod (lenM, 2)
+   --теперь в функцию передается максимальный размер массива.
+   --если он меньше самого большого размера комнаты, 
+   --то размер принудительно увеличивается
    
    --возможные размеры комнат
-   local even = {2, 4, 6}
-   local uneven = {3, 5, 7}
+   local roomSize = {2, 3, 4, 5, 6, 7}
    
-   --определяем подходящий размер комнат
-   local tmp = 1
+   if lenN < #roomSize then
+      lenN = #roomSize
+   end
    
+   if lenM < #roomSize then
+      lenM = #roomSize
+   end
+   
+   --размеры отдельных комнат
+   self.sizeI = roomSize[math.random (#roomSize)]
+   self.sizeJ = roomSize[math.random (#roomSize)]
+   
+   --определяем размеры исходного протолабиринта исходя из полученых размеров конечной карты
+   --вначале размеры единичные
+   mazeI, mazeJ = 1, 1
+   
+   --сначала для размерв по вертикали
    while true do
-      --если переданный размер - нечетный,
-      if modN == 1 then
-         --то размер стены должен выбираться из четного ряда
-         self.sizeI = even[math.random (3)]
-      else
-         self.sizeI = uneven[math.random (3)]
-      end
-   
-      if modM == 1 then
-         --то размер стены должен выбираться из четного ряда
-         self.sizeJ = even[math.random (3)]
-      else
-         self.sizeJ = uneven[math.random (3)]
-      end
-   
-      --определяем, влезетут ли в заданый размер карты полученные комнаты
-      if math.fmod (lenN - 1, self.sizeI) == 0 and math.fmod (lenM - 1, self.sizeJ) == 0 then
+      if (mazeI + 1) * self.sizeI > lenN then
          break
-      end
-      
-      print ("lenI = ", self.sizeI, " LenJ = ", self.sizeJ)
-      
-      tmp = tmp + 1
-      
-      if tmp > 10 then
-         error ()         
+      else
+         mazeI = mazeI + 1
       end
    end
    
-   --теперь создадим из полученных данных размер для протолабиринта
-   local mazeI, mazeJ = (lenN - 1) / self.sizeI, (lenM - 1) / self.sizeJ
-     
+   --потом по горизонтали
+   while true do
+      if (mazeJ + 1) * self.sizeJ > lenM then
+         break
+      else
+         mazeJ = mazeJ + 1
+      end
+   end
+      
    --сгенерировать протолабиринт
    local preMaze = proto:New (mazeI, mazeJ)
    
@@ -112,6 +108,32 @@ function M:Generate (lenN, lenM)
    return resultMap
 end
 
+--парсер - для отображения лабиринтов в консоль
+--работает с конечным лабиринтом
+function M:Parse (map)
+   for i, j, val in map:Iterate () do
+      if j == 1 then
+         io.write ("\n")
+      end
+      
+      if type (val) == "number" then
+         local ch 
+         
+         if val == 0 then        --пол
+            ch = "."
+         elseif val == 1 then    --стена
+            ch = "#"
+         end
+         
+         io.write (ch)
+      else
+         error ("Парсер попал на нечисловое значение!")
+      end      
+   end
+   
+   io.write ("\n")
+end
+
 -------------------------------------
 --[[           Тесты             ]]--
 -------------------------------------
@@ -120,9 +142,10 @@ end
 local function test_Maze ()
    math.randomseed (os.time ())
    
-   local map = M:Generate (22, 21)
+   local map = M:Generate (20, 60)
    
-   map:Write ()
+   --map:Write ()
+   M:Parse (map)
 end
 
 return M

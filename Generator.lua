@@ -4,7 +4,7 @@
 local matrix   = require ("lua_utils.matrix")
 local neig     = require ("lua_utils.neighborhood")
 local room     = require ("Room")
-local proto    = require ("Proto2")
+local proto    = require ("Proto")
 
 local M = {}
 
@@ -87,7 +87,7 @@ function M:Prim (protoMaze)
       end
       
    end
-end
+end --Алгоритм Прима
 
 -------------------------------------
 --[[           Тесты             ]]--
