@@ -3,8 +3,8 @@
 
 local matrix   = require ("lua_utils.matrix")
 local neig     = require ("lua_utils.neighborhood")
-local room     = require ("Room")
-local proto    = require ("Proto")
+local room     = require ("Maze.Room")
+local proto    = require ("Maze.Proto")
 
 local M = {}
 
@@ -47,45 +47,45 @@ end
 function M:Prim (protoMaze)
    --вначале создается вспомогательный массив с размерами прротолабиринта
    local utilArr = matrix:New (protoMaze.N, protoMaze.M)
-   
+
    --вначале весь вспомогательный массив заполен признаками Снаружи
    for i, j, _ in utilArr:Iterate () do
       utilArr:Set (i, j, Type.Outside)
    end
-   
+
    --для случайной локации ставится признак внутри
    local ri, rj = math.random (utilArr.N), math.random (utilArr.M)
    utilArr:Set (ri, rj, Type.Inside)
-   
+
    --установить для всех ее соседей признак на границе
    self:SetBorderNeihg (utilArr, ri, rj)
-   
+
    --пока остались локации с атрибутом На границе
    while #BorderList > 0 do
       --выбираем случайную граничную комнату
       local tmpi, tmpj = BorderList:GetRnd ()
-      
+
       --ставим ей атрибут внутри
       utilArr:Set (tmpi, tmpj, Type.Inside)
-      
+
       --для всех соседних с ней локация с атрибутом снаружи
       --ставим атрибут на границе
       self:SetBorderNeihg (utilArr, tmpi, tmpj)
-      
+
       --выбираем случайную локацию с атрибутом внутри рядом с текущей
       --и ломаем стену между ними.
       while true do
          local rndDir = math.random (4)
-         
+
          --случайное смещение
          local di, dj = neig:GetDir (rndDir)
-         
+
          if utilArr:IsInside (tmpi + di, tmpj + dj) and utilArr:Get (tmpi + di, tmpj + dj) == Type.Inside then
             protoMaze:BreakWall (tmpi, tmpj, di, dj)
             break
          end
       end
-      
+
    end
 end --Алгоритм Прима
 

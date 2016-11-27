@@ -2,9 +2,9 @@
 
 local matrix   = require ("lua_utils.matrix")
 local neig     = require ("lua_utils.neighborhood")
-local room     = require "Room"
-local proto    = require ("Proto")
-local PrimGen  = require ("Generator")
+local room     = require "Maze.Room"
+local proto    = require ("Maze.Proto")
+local PrimGen  = require ("Maze.Generator")
 
 local M = {}
 

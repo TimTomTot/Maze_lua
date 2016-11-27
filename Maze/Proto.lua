@@ -7,7 +7,7 @@
 -- -ну, и методы доступа
 
 local matrix   = require ("lua_utils.matrix")
-local room     = require ("Room")
+local room     = require ("Maze.Room")
 local neig     = require ("lua_utils.neighborhood")
 
 local M = {}
@@ -20,31 +20,31 @@ setmetatable (M, {__index = matrix})
 function M:New (N, M)
    --создадим матрицу нужного размера
    local o = matrix:New (N, M)
-      
+
    --заполним ее как протолабиринт со всеми изолированными комнатами
    for i, j, _ in o:Iterate () do
       o:Set (i, j, room:New (1, 1))
    end
-   
+
    --инстанцируем полученное значение
    setmetatable (o, self)
-      
+
 	self.__index = self
-	
+
 	return o
 end
 
 --функция для отрисовки протолабиринта на экран, для проверок всех типов
 function M:Write ()
    io.write ("\n")
-   
+
    for i, j, val in self:Iterate () do
       if j == 1 then
          io.write ("\n")
       end
-      
-      local left, top = val:GetWall () 
-      
+
+      local left, top = val:GetWall ()
+
       if left == 1 and top == 1 then
          io.write ("P")
       elseif left == 1 and top == 0 then
@@ -63,44 +63,44 @@ function M:IsGo (i, j, di, dj)
    --получим значение
    local curRoom, left, top
    local rez = false
-   
+
    --когда нужно проверить стену между верхним или левым соследом
    --сосед сверху
    if di < 0 then
       curRoom = self:Get (i, j)
       left, top = curRoom:GetWall ()
-      
+
       if top == 0 then
          rez = true
       end
-      
+
       return rez
    elseif dj < 0 then -- сосед слева
       curRoom = self:Get (i, j)
       left, top = curRoom:GetWall ()
-      
+
       if left == 0 then
          rez = true
       end
-      
+
       return rez
    elseif di > 0 then --сосед снизу
       curRoom = self:Get (i + di, j)
       left, top = curRoom:GetWall ()
-      
+
       if top == 0 then
          rez = true
       end
-      
+
       return rez
    elseif dj > 0 then --сосед справа
       curRoom = self:Get (i, j + dj)
       left, top = curRoom:GetWall ()
-      
+
       if left == 0 then
          rez = true
       end
-      
+
       return rez
    end
 end
@@ -130,27 +130,27 @@ end
 --размерность протолабиринта
 local function test_ProtoLen ()
    --создадим лабиринт и проверим его размеры
-   local lenN, lenM = 10, 12   
+   local lenN, lenM = 10, 12
    local protoA = M:New (lenN, lenM)
-   
-   assert (protoA.N == lenN and protoA.M == lenM, 
+
+   assert (protoA.N == lenN and protoA.M == lenM,
       "Неверно заданы размеры протолабиринта!" ..
       "\nproto:N = " .. tostring (protoA.N) .. " proto:M = " .. tostring (protoA.M))
-   
+
    protoA = nil
 end
 
 --проверка возможности прохода
 local function test_IsGo ()
    local testA = M:New (3, 3)
-   
+
    --print ("IsGo?", testA:IsGo (2, 2, -1, 0))
-   
+
    --testA:Get (2,2):SetWall (1, 0)
-   
-   --попробуем нарисовать протолабиринт на экране   
+
+   --попробуем нарисовать протолабиринт на экране
    testA:Write ()
-   
+
    --сломать стену
    for di, dj in neig:Iter () do
       testA:BreakWall (2, 2, di, dj)
