@@ -11,7 +11,7 @@ local tileWidth  = 32 -- ширина тайла
 local tileHeight = 32 -- высота тайла
 
 --матрица для отображения на экране
-local viewN, viewM = 20, 30
+local viewN, viewM = 16, 30
 local windowView = matrix:New (viewN, viewM)
 
 --лабиринт
