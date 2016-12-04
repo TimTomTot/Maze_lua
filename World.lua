@@ -4,7 +4,7 @@
 local class          = require "hump.class"
 local vector         = require "hump.vector"
 local maze           = require "Maze.Maze"
-local pleerCharacter = require "pleer"
+local pleerCharacter = require "player"
 local matrix         = require "lua_utils.matrix"
 
 local W  = class {}

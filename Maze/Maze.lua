@@ -5,6 +5,7 @@ local neig     = require ("lua_utils.neighborhood")
 local room     = require "Maze.Room"
 local proto    = require ("Maze.Proto")
 local PrimGen  = require ("Maze.Generator")
+local map      = require "lua_utils.map"
 
 local M = {}
 
@@ -15,7 +16,7 @@ function M:Extend (protoMaze)
    --local self.sizeJ = 6
 
    --создание пустого массива для переноса
-   local buffer = matrix:New (protoMaze.N * self.sizeI + 1, protoMaze.M * self.sizeJ + 1)
+   local buffer = map:New (protoMaze.N * self.sizeI + 1, protoMaze.M * self.sizeJ + 1)
 
    --пройтись по всему протолабиринту и отрисовать каждую его комнату
    for i, j, val in protoMaze:Iterate () do
@@ -48,6 +49,22 @@ function M:Extend (protoMaze)
    for tmpj = 1, buffer.M do
       buffer:Set (buffer.N, tmpj, 1)
    end
+
+   --под конец, нужно задать переменные для парсинга
+   function getter (buf, x, y)
+      local rez
+      local val = buf:Get (x, y)
+
+      if val == 0 then
+         rez = "."
+      elseif val == 1 then
+         rez = "#"
+      end
+
+      return rez
+   end
+
+   buffer:setTileGetter (function (buffer, i, j) return getter (buffer, i, j) end)
 
    return buffer
 end
