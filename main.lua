@@ -5,6 +5,8 @@ local matrix   = require "lua_utils.matrix"
 local vector   = require "hump.vector"
 local layer    = require "View.layer"
 local viewer   = require "View.viewer"
+local input    = require "input"
+local signal   = require "hump.signal"
 
 --подготовка генератора случайных чисел
 math.randomseed (os.time ())
@@ -17,6 +19,12 @@ local mapLayer = {}
 
 --объект отображения
 local Viewer = {}
+
+--j,hаботчик пользовательского ввода
+local inputHandler = {}
+
+--обработчик сигналов
+local inputSignal = {}
 
 function love.load ()
    --создать карту
@@ -43,10 +51,30 @@ function love.load ()
    viewInfo.mainMap = mapLayer
 
    Viewer = viewer (viewInfo)
+
+   --обработчик сигналов
+   inputSignal = signal.new ()
+
+   --информация для обработчика ввода
+   local inputInfo = {}
+   inputInfo.delay = 5
+   inputInfo.signal = inputSignal
+   inputInfo.kayConform = {
+      {"up", "upMove"},
+      {"down", "downMove"},
+      {"right", "rightMove"},
+      {"left", "leftMove"}
+   }
+
+   inputHandler = input (inputInfo)
+
+   --задание функций для обработки сигналов
+   inputSignal:register ("upMove", function ()   Viewer:move (vector (-1, 0)) end)
+
 end
 
 function love.update (dt)
-
+   inputHandler:handle ()
 end
 
 function love.draw ()

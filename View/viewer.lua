@@ -37,8 +37,24 @@ function V:addLayer (layer, n)
 end
 
 --функция сдвига фрейма отображения
-function V:move (pos)
+--относительно текущего
+function V:move (relativePos)
+   --новая потенциальная позиция отображения
+   local newPos = vector (self.frame.pos.x + relativePos.x, self.frame.pos.y + relativePos.y)
 
+   --обработка ограничений
+   if newPos.x < 1 then
+      newPos.x = 1
+   elseif newPos.y < 1 then
+      newPos.y = 1
+   elseif newPos.x > self.layerList[1].map.N - self.frame.x + 1 then
+      newPos.x = self.layerList[1].map.N - self.frame.x + 1
+   elseif newPos.y > self.layerList[1].map.M - self.frame.y + 1 then
+      newPos.y = self.layerList[1].map.M - self.frame.y + 1
+   end
+
+   --задать позицию после внесения ограничений
+   self.frame.pos = newPos
 end
 
 --функция отображения всего на экран
