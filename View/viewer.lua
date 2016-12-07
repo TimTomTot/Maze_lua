@@ -38,23 +38,31 @@ end
 
 --функция сдвига фрейма отображения
 --относительно текущего
-function V:move (relativePos)
+function V:move (shift)
+   --local di, dj = relativePos:unpack ()
+
    --новая потенциальная позиция отображения
-   local newPos = vector (self.frame.pos.x + relativePos.x, self.frame.pos.y + relativePos.y)
+   local newPos = vector (self.frame.pos.x + shift.x, self.frame.pos.y + shift.y)
+
+   --print("что мы имеем:")
+   --print("newPos = ", newPos:unpack ())
+
+   local di, dj = newPos:unpack ()
 
    --обработка ограничений
-   if newPos.x < 1 then
-      newPos.x = 1
-   elseif newPos.y < 1 then
-      newPos.y = 1
-   elseif newPos.x > self.layerList[1].map.N - self.frame.x + 1 then
-      newPos.x = self.layerList[1].map.N - self.frame.x + 1
-   elseif newPos.y > self.layerList[1].map.M - self.frame.y + 1 then
-      newPos.y = self.layerList[1].map.M - self.frame.y + 1
+   if di < 0 then
+      newPos.x = 0
+   elseif dj < 0 then
+      newPos.y = 0
+   elseif di > self.layerList[1].map.M - self.frame.pos.x + 1 then
+      newPos.x = self.layerList[1].map.M - self.frame.pos.x + 1
+   elseif dj > self.layerList[1].map.N - self.frame.pos.y + 7 then
+      newPos.y = self.layerList[1].map.N - self.frame.pos.y + 7
    end
 
    --задать позицию после внесения ограничений
    self.frame.pos = newPos
+   --print("self.frame.pos = ", self.frame.pos:unpack ())
 end
 
 --функция отображения всего на экран

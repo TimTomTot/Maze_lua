@@ -18,41 +18,24 @@ function M:init (input)
    self.delay = input.delay
    self.currDelay = self.delay
 
-   --созранить данные для вызова сигналов в понятном и удобочитаемом виде
-   self.kaySignal = {}
-
-   for _, val in ipairs (input.kayConform) do
-      table.insert (self.kaySignal, {kay = input.kayConform[1], identifire = input.kayConform[2]})
-   end
+   self.signelTable = input.kayConform
 end
 
 --ловля пользовательского ввода и посылка сигналов в систему
 function M:handle ()
-   for _, val in ipairs (self.kaySignal) do
-      if love.keyboard.isDown (val.kay) then
-         print (tostring (val.kay))
-         self.signal:emit (val.identifire)
-         --break
-      end
-   end
-
-   --[[
-   --обработка ввода производится только по истечению периода задержки
    if self.currDelay == 0 then
-      --обработка
-      for _, val in ipairs (self.kaySignal) do
-         if love.keyboard.isDown (val.kay) then
-            self.signal:emit (val.identifire)
+      for _, val in ipairs(self.signelTable) do
+         --обработка пользовательского ввода на самом простом уровне
+         if love.keyboard.isDown (val[1]) then
+            self.signal:emit (val[2])
             break
          end
       end
 
-      --перезапуск счетчика задержки
       self.currDelay = self.delay
    else
       self.currDelay = self.currDelay - 1
    end
-   ]]--
 end
 
 return M

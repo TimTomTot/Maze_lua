@@ -57,7 +57,7 @@ function love.load ()
 
    --информация для обработчика ввода
    local inputInfo = {}
-   inputInfo.delay = 5
+   inputInfo.delay = 3
    inputInfo.signal = inputSignal
    inputInfo.kayConform = {
       {"up", "upMove"},
@@ -69,8 +69,10 @@ function love.load ()
    inputHandler = input (inputInfo)
 
    --задание функций для обработки сигналов
+   inputSignal:register ("downMove", function ()   Viewer:move (vector (1, 0)) end)
    inputSignal:register ("upMove", function ()   Viewer:move (vector (-1, 0)) end)
-
+   inputSignal:register ("rightMove", function ()   Viewer:move (vector (0, 1)) end)
+   inputSignal:register ("leftMove", function ()   Viewer:move (vector (0, -1)) end)
 end
 
 function love.update (dt)
