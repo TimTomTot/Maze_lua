@@ -9,9 +9,23 @@ local matrix   = require "utils.matrix"
 local M = class {}
 
 --конструктор
-function M:init (world)
+function M:init (world, signal)
    --карта, к которой привязано отображение
    self.world = world
+
+   --обработчик сигналов для отображения
+   self.signal = signal
+
+   --регистрация изменения позиции фрейма (абсолютного)
+   self.signal:register ("setFramePos",
+      function (i, j) self:setFramePos (i, j) end)
+
+   --регистрация изменения позиции фрейма (относительного)
+   self.signal:register ("moveFrame",
+      function (i, j) self:moveFrame (i, j) end)
+
+   --запомнить максимальные размеры карты
+   self.MaxMap = vector (self.world:getMapSize ())
 
    --print(self.world)
 
@@ -66,5 +80,43 @@ function M:draw ()
       end
    end
 end --draw
+
+--ограничение для фрейма
+function M:checkFrame ()
+   --ограничения
+   if self.framePos.x < 0 then
+      self.framePos.x = 0
+   end
+
+   if self.framePos.y < 0 then
+      self.framePos.y = 0
+   end
+
+   if self.framePos.x > self.MaxMap.x - self.frame.N then
+      self.framePos.x = self.MaxMap.x - self.frame.N
+   end
+
+   if self.framePos.y > self.MaxMap.y - self.frame.M then
+      self.framePos.y = self.MaxMap.y - self.frame.M
+   end
+end
+
+--сдвиг фрейма отображения относительно текущей позиции
+function M:moveFrame (di, dj)
+   self.framePos.x = self.framePos.x + di
+   self.framePos.y = self.framePos.y + dj
+
+   --проверить ограничение
+   self:checkFrame ()
+end
+
+--установка фрейма на определенное место карты (с точкой в середине)
+function M:setFramePos (i, j)
+   self.framePos.x = i - math.ceil(self.frame.N / 2)
+   self.framePos.y = j - math.ceil(self.frame.M / 2)
+
+   -- проверить ограничение
+   self:checkFrame ()
+end
 
 return M

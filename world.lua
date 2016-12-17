@@ -91,4 +91,9 @@ function M:getCell (i, j)
    return outputCell
 end
 
+--получить данные о размере карты
+function M:getMapSize ()
+   return self.lavel.N, self.lavel.M
+end
+
 return M
