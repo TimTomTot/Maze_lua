@@ -2,7 +2,7 @@
 --отличается наличием функции вызова тайла
 --для дальнейшего парсинга
 
-local matrix = require ("lua_utils.matrix")
+local matrix = require ("utils.matrix")
 
 local M = {}
 

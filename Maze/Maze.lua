@@ -1,11 +1,11 @@
 --Обновленный лабиринт, с учетом всех шишек
 
-local matrix   = require ("lua_utils.matrix")
-local neig     = require ("lua_utils.neighborhood")
+local matrix   = require ("utils.matrix")
+local neig     = require ("utils.neighborhood")
 local room     = require "Maze.Room"
 local proto    = require ("Maze.Proto")
 local PrimGen  = require ("Maze.Generator")
-local map      = require "lua_utils.map"
+local map      = require "utils.map"
 
 local M = {}
 

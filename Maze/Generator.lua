@@ -1,8 +1,8 @@
 --генерация по алгоритму Прима
 --с учетом старых ошибок
 
-local matrix   = require ("lua_utils.matrix")
-local neig     = require ("lua_utils.neighborhood")
+local matrix   = require ("utils.matrix")
+local neig     = require ("utils.neighborhood")
 local room     = require ("Maze.Room")
 local proto    = require ("Maze.Proto")
 

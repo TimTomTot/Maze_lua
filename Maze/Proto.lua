@@ -6,9 +6,9 @@
 -- -сломать стену между смежными локациями
 -- -ну, и методы доступа
 
-local matrix   = require ("lua_utils.matrix")
+local matrix   = require ("utils.matrix")
 local room     = require ("Maze.Room")
-local neig     = require ("lua_utils.neighborhood")
+local neig     = require ("utils.neighborhood")
 
 local M = {}
 
