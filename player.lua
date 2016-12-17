@@ -11,6 +11,9 @@ function M:init (data)
    self.tile = data.tile
    self.world = data.world
    self.signalView = data.signalView
+
+   --радиус обзора
+   self.fovR = data.R
 end
 
 --установить игрока на карту мира
@@ -31,6 +34,11 @@ function M:setToMap ()
          --сохранить текущую позицию
          self.pos = vector (rndPosI, rndPosJ)
 
+         --первоначальный расчет поля зрения
+         self.world:solveFOV (self.pos.x,
+            self.pos.y,
+            self.fovR)
+
          --установить отображение на игроке
          self.signalView:emit ("setFramePos", rndPosI, rndPosJ)
 
@@ -50,6 +58,11 @@ function M:step (di, dj)
          self.pos.y + dj)
 
       self.pos = self.pos + vector (di, dj)
+
+      --расчитать поле зрения
+      self.world:solveFOV (self.pos.x,
+         self.pos.y,
+         self.fovR)
 
       --и оповестить об этом объект отображения
       self.signalView:emit ("setFramePos", self.pos.x, self.pos.y)

@@ -8,7 +8,8 @@ local input    = require "input"
 local player   = require "player"
 
 --подготовка генератора случайных чисел
-math.randomseed (os.time ())
+--math.randomseed (os.time ())
+math.randomseed (15)
 
 --мир игры
 local GameWorld = world ()
@@ -56,7 +57,8 @@ function love.load ()
    Hero = player ({id = 1,
       tile = "@",
       world = GameWorld,
-      signalView = viewSignal})
+      signalView = viewSignal,
+      R = 6})
 
    --установить игрока на карту
    Hero:setToMap ()

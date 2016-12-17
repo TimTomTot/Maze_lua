@@ -55,6 +55,14 @@ function M:init (world, signal)
    }
 
    table.insert(self.layerList, {name = "creatures", data = layer (playerData)})
+
+   --отображение затененных тайлов
+   local shadowsData = {"fantasy-tileset_bg.png",
+      {{".", 4, 3},
+      {"#", 2, 2}}
+   }
+
+   table.insert(self.layerList, {name = "shadows", data = layer (shadowsData)})
 end --init
 
 --отображение на экран

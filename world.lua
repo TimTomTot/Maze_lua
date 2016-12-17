@@ -3,6 +3,7 @@
 local class    = require "hump.class"
 local matrix   = require "utils.matrix"
 local cell     = require "cell"
+local brez     = require "utils.brez"
 
 local M = class {}
 
@@ -14,6 +15,7 @@ function M:init ()
    --имена для слоев карты для передачи их в cell
    self.mapNane = "map"
    self.characterName = "creatures"
+   self.shadowsName = "shadows"
 
    --уровень представляет из себя массив типа matrix,
    --в каждой точке которого находится таблица с объектами, наполняющими уровень
@@ -33,7 +35,11 @@ function M:addMap (inputMap)
             tile = inputMap:getTile (i, j)},
 
          --слой с игровыми персонажами
-         creatures = {}
+         creatures = {},
+
+         --слой с затемнением
+         --в начале всегда затемнено
+         visible = "shadow"
       }
       self.lavel:Set (i, j, cellData)
    end
@@ -85,6 +91,14 @@ function M:getCell (i, j)
       table.insert (cellData, {self.characterName, nil})
    end
 
+   --данные о затенении этого участка
+   --если участок затемнен, то передаем, что нужно отрисовать
+   if self.lavel:Get (i, j).visible == "shadow" then
+      table.insert(cellData, {self.shadowsName, self.lavel:Get (i, j).map.tile})
+   else
+      table.insert(cellData, {self.shadowsName, nil})
+   end
+
    --передаются в него
    local outputCell = cell (cellData)
 
@@ -94,6 +108,62 @@ end
 --получить данные о размере карты
 function M:getMapSize ()
    return self.lavel.N, self.lavel.M
+end
+
+--расчитать видимую зону
+--на вход передаются - точка от которой нужно считать
+--радиус обзора
+function M:solveFOV (i, j, R)
+   --предварительно обновить карту теней
+   self:fillShadow ()
+
+   --убрать тень в точке с игроком
+   self.lavel:Get (i, j).visible = "visible"
+
+   --создать список точек, до которых необходимо проложить видимость
+   local viewPointList = {}
+
+   --функция для добавления точек в список
+   local addToList = function (x, y)
+      table.insert(viewPointList, {x, y})
+   end
+
+   --расчитать из текущей позиции круг радиусом как поле видимости
+   --все найденные точки при этом занести в список
+   brez:Circle (addToList, i, j, R)
+
+   local addVisible = {}
+
+   addVisible.empty = true
+   --функция, добавляющая точку на карте в разряд видимых
+   addVisible.funct = function (x, y)
+      if addVisible.empty then
+         self.lavel:Get (x, y).visible = "visible"
+      end
+
+      --проверка на выход за границы
+      if self.lavel:IsInside (x, y) then
+            if self.lavel:Get(x, y).map.val == 1 then
+               addVisible.empty = false
+            end
+      end
+   end
+
+   --для каждой точки из списка проложить в нее линию обзора
+   for _, val in ipairs(viewPointList) do
+      addVisible.empty = true
+
+      brez:Line (addVisible.funct, i, j, val[1], val[2])
+   end
+
+end
+
+--вспомогательная функция, обновляющая карту видимости
+function M:fillShadow ()
+   --просто залить всю карту тенями
+   for i, j, val in self.lavel:Iterate () do
+      val.visible = "shadow"
+   end
 end
 
 return M
