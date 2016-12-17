@@ -58,7 +58,7 @@ function love.load ()
       tile = "@",
       world = GameWorld,
       signalView = viewSignal,
-      R = 6})
+      R = 5})
 
    --установить игрока на карту
    Hero:setToMap ()

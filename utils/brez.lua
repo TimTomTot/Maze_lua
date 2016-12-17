@@ -10,21 +10,29 @@ function M:Line (funct, i0, j0, i1, j1)
    local steep = math.abs (j1 - j0) > math.abs (i1 - i0)
 
    --перестановки начала линии
-
    if steep then
       i0, j0 = j0, i0
       i1, j1 = j1, i1
    end
---[[
+
+   local deltai
+   local deltaj
+
+   local inc
+
    --перестановки концов
    if i0 > i1 then
-      i0, i1 = i1, i0
-      j0, j1 = j1, j0
+      --i0, i1 = i1, i0
+      --j0, j1 = j1, j0
+
+      deltai = i0 - i1
+      deltaj = math.abs (j0 - j1)
+      inc = -1
+   else
+      deltai = i1 - i0
+      deltaj = math.abs (j1 - j0)
+      inc = 1
    end
---]]
-   
-   local deltai = i1 - i0
-   local deltaj = math.abs (j1 - j0)
 
    local err = 0
 
@@ -38,7 +46,7 @@ function M:Line (funct, i0, j0, i1, j1)
       jstep = -1
    end
 
-   for tmpi = i0, i1 do
+   for tmpi = i0, i1, inc do
       if steep then
          funct (tmpj, tmpi)
       else
@@ -53,6 +61,7 @@ function M:Line (funct, i0, j0, i1, j1)
       end
    end
 end
+
 
 --генерация окружности по Брезенхему
 function M:Circle (funct, i0, j0, R)
