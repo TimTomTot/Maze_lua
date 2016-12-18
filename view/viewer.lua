@@ -78,12 +78,15 @@ function M:draw ()
 
       --пройтись по всем уровням заданым в viewer
       for _, val in ipairs (self.layerList) do
-         --если для этого уровня есть тайл,
-         if curCell[val.name].tile then
-            love.graphics.draw (val.data.tileset,
-               val.data:getQuad (curCell[val.name].tile),
-               j * tw - tw + self.drawPos.y,
-               i * th - th + self.drawPos.x)
+         --рисуется только в уже видимой (посещенной) зоне
+         if curCell["visited"].tile then
+            --если для этого уровня есть тайл,
+            if curCell[val.name].tile then
+               love.graphics.draw (val.data.tileset,
+                  val.data:getQuad (curCell[val.name].tile),
+                  j * tw - tw + self.drawPos.y,
+                  i * th - th + self.drawPos.x)
+            end
          end
       end
    end

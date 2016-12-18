@@ -16,6 +16,7 @@ function M:init ()
    self.mapNane = "map"
    self.characterName = "creatures"
    self.shadowsName = "shadows"
+   self.visitedName = "visited"
 
    --уровень представляет из себя массив типа matrix,
    --в каждой точке которого находится таблица с объектами, наполняющими уровень
@@ -39,7 +40,11 @@ function M:addMap (inputMap)
 
          --слой с затемнением
          --в начале всегда затемнено
-         visible = "shadow"
+         visible = "shadow",
+
+         --слой со свединиями о посещении
+         --в начале все точки считаются не посещенными
+         visited = false
       }
       self.lavel:Set (i, j, cellData)
    end
@@ -99,6 +104,13 @@ function M:getCell (i, j)
       table.insert(cellData, {self.shadowsName, nil})
    end
 
+   --данные о посещении этого участка
+   if self.lavel:Get (i, j).visited then
+      table.insert(cellData, {self.visitedName, "*"})
+   else
+      table.insert(cellData, {self.visitedName, nil})
+   end
+
    --передаются в него
    local outputCell = cell (cellData)
 
@@ -119,6 +131,9 @@ function M:solveFOV (i, j, R)
 
    --убрать тень в точке с игроком
    self.lavel:Get (i, j).visible = "visible"
+   if not self.lavel:Get (i, j).visited then
+      self.lavel:Get (i, j).visited = true
+   end
 
    --создать список точек, до которых необходимо проложить видимость
    local viewPointList = {}
@@ -139,6 +154,9 @@ function M:solveFOV (i, j, R)
    addVisible.funct = function (x, y)
       if addVisible.empty then
          self.lavel:Get (x, y).visible = "visible"
+         if not self.lavel:Get (x, y).visited then
+            self.lavel:Get (x, y).visited = true
+         end
       end
 
       --проверка на выход за границы
