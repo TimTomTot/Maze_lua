@@ -66,6 +66,9 @@ function M:step (di, dj)
 
       --и оповестить об этом объект отображения
       self.signalView:emit ("setFramePos", self.pos.x, self.pos.y)
+   else
+      --сообщение о том, что дальше продвинуться невозможно
+      self.signalView:emit ("hud", "message", "You can't do there!")
    end
 end
 
