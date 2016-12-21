@@ -36,7 +36,7 @@ local ui = {}
 
 function love.load ()
    --создать карту и запомнить ее на игровом мире
-   local newMap = maze:Generate (60, 90)
+   local newMap = maze:Generate (30, 45)
    GameWorld:addMap (newMap)
 
    --настоить отбражение
