@@ -39,11 +39,11 @@ function love.load ()
 
    --настроить пользовательский ввод
    local inputData = {signal = inputSignal,
-      delay = 4,
       kayConform = {{"up", "moveUp"},
-      {"down", "moveDown"},
-      {"right", "moveRight"},
-      {"left", "moveLeft"}}
+         {"down", "moveDown"},
+         {"right", "moveRight"},
+         {"left", "moveLeft"}
+      }
    }
    inputHandler = input (inputData)
 
@@ -64,8 +64,13 @@ function love.load ()
    Hero:setToMap ()
 end
 
+--обработка нажатия кнопок
+function love.keypressed (key, isrepeat)
+   inputHandler:handle (key)
+end
+
 function love.update (dt)
-   inputHandler:handle ()
+   
 end
 
 function love.draw ()
