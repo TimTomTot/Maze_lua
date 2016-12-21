@@ -6,6 +6,7 @@ local world    = require "world"
 local signal   = require "hump.signal"
 local input    = require "input"
 local player   = require "player"
+local hud      = require "hud"
 
 --подготовка генератора случайных чисел
 math.randomseed (os.time ())
@@ -28,6 +29,9 @@ local inputHandler = {}
 
 --игрок
 local Hero = {}
+
+--пользовательский интерфейс
+local ui = {}
 
 function love.load ()
    --создать карту и запомнить ее на игровом мире
@@ -62,6 +66,9 @@ function love.load ()
 
    --установить игрока на карту
    Hero:setToMap ()
+   
+   --загрузка пользовательского интерфейса
+   ui = hud ("neuropol_medium.ttf", 14)
 end
 
 --обработка нажатия кнопок
@@ -75,4 +82,5 @@ end
 
 function love.draw ()
    Viewer:draw ()
+   ui:draw ()
 end
