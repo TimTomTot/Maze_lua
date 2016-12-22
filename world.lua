@@ -17,6 +17,7 @@ function M:init ()
    self.characterName = "creatures"
    self.shadowsName = "shadows"
    self.visitedName = "visited"
+   self.objectsName = "odjects"
 
    --уровень представляет из себя массив типа matrix,
    --в каждой точке которого находится таблица с объектами, наполняющими уровень
@@ -34,7 +35,10 @@ function M:addMap (inputMap)
          --слой с картой
          map = {val = inputMap:Get (i, j),
             tile = inputMap:getTile (i, j)},
-
+         
+         --слой с игровыми объектами
+         odjects = {},
+         
          --слой с игровыми персонажами
          creatures = {},
 
@@ -51,11 +55,19 @@ function M:addMap (inputMap)
 end
 
 --проверка, свободна ли эта ячейка
-function M:isEmpty (i, j)
+function M:isEmpty (i, j, spec)
+   --модификатор spec задается для поиска свободных участков только не занятых другими объектами
    local rez = true
-
-   if self.lavel:Get (i, j).map.val == 1 then
-      rez = false
+   local point = self.lavel:Get (i, j) 
+   
+   if not spec then
+      if point.map.val == 1 then
+         rez = false
+      end
+   elseif spec == "object" then
+      if point.map.val == 1 or point.object then
+         rez = false
+      end
    end
 
    return rez
@@ -69,6 +81,13 @@ end
 function M:addCreature (cre, i, j)
    self.lavel:Get (i, j).creatures.id = cre.id
    self.lavel:Get (i, j).creatures.tile = cre.tile
+end
+
+--функция добавления объекта на карту,
+--во многом аналогичная функции добавления существа
+function M:addObject (obj, i, j)
+   self.lavel:Get (i, j).odjects.id = obj.id
+   self.lavel:Get (i, j).odjects.tile = obj.tile
 end
 
 --сдвинуть существо
@@ -88,7 +107,14 @@ function M:getCell (i, j)
 
    --про карту
    table.insert (cellData, {self.mapNane, self.lavel:Get (i, j).map.tile})
-
+   
+   --если на данной точке есть объект
+   if self.lavel:Get (i, j).odjects.tile then
+      table.insert (cellData, {self.objectsName, self.lavel:Get (i, j).odjects.tile})
+   else
+      table.insert (cellData, {self.objectsName, nil})
+   end
+   
    --если есть данные о существе, то вернуть их
    if self.lavel:Get (i, j).creatures.tile then
       table.insert (cellData, {self.characterName, self.lavel:Get (i, j).creatures.tile})
@@ -99,7 +125,14 @@ function M:getCell (i, j)
    --данные о затенении этого участка
    --если участок затемнен, то передаем, что нужно отрисовать
    if self.lavel:Get (i, j).visible == "shadow" then
-      table.insert(cellData, {self.shadowsName, self.lavel:Get (i, j).map.tile})
+      local tile 
+      
+      if self.lavel:Get (i, j).odjects.tile then
+         tile = self.lavel:Get (i, j).odjects.tile
+      else 
+         tile = self.lavel:Get (i, j).map.tile
+      end
+      table.insert(cellData, {self.shadowsName, tile})
    else
       table.insert(cellData, {self.shadowsName, nil})
    end

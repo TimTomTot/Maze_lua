@@ -68,7 +68,7 @@ function M:step (di, dj)
       self.signalView:emit ("setFramePos", self.pos.x, self.pos.y)
    else
       --сообщение о том, что дальше продвинуться невозможно
-      self.signalView:emit ("hud", "message", "You can't go there!")
+      self.signalView:emit ("hud", "message", "Здесь не пройти!")
    end
 end
 

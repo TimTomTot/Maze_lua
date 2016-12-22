@@ -38,7 +38,25 @@ function love.load ()
    --создать карту и запомнить ее на игровом мире
    local newMap = maze:Generate (30, 45)
    GameWorld:addMap (newMap)
+   
+   --добавление лестницы на игровую карту
+   -- первый вариант - в лоб
+   
+   --размер карты
+   local im, jm = GameWorld:getMapSize ()
+   
+   while true do
+      local rndi, rndj = math.random (im), math.random (jm)
 
+      if GameWorld:isEmpty (rndi, rndj, "object") then
+         GameWorld:addObject ({id = 1, tile = ">"},
+            rndi,
+            rndj)
+         
+         break
+      end
+   end
+   
    --настоить отбражение
    Viewer = viewer (GameWorld, viewSignal)
 
@@ -69,13 +87,13 @@ function love.load ()
    Hero:setToMap ()
 
    --загрузка пользовательского интерфейса
-   ui = hud ("keyrusMedium.ttf", 18, viewSignal)
+   ui = hud ("keyrusMedium.ttf", 22, viewSignal)
 
    --создать лейбл для отображения fps
    ui:addLable ({name = "fps", pos = vector (10, 10)})
 
    --лейбл для отображения основных игровых сообщений
-   ui:addLable ({name = "message", pos = vector (180, 10)})
+   --ui:addLable ({name = "message", pos = vector (180, 10)})
 end
 
 --обработка нажатия кнопок

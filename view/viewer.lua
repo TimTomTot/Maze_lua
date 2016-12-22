@@ -49,6 +49,13 @@ function M:init (world, signal)
 
    table.insert(self.layerList, {name = "map", data = layer (mapData)})
 
+   --отображение объектов на карте
+   local objectData = {"fantasy-tileset_b.png",
+      {{">", 5, 1}} -- лестница   
+   }
+   
+   table.insert(self.layerList, {name = "odjects", data = layer (objectData)})
+   
    --отображение игрока
    local playerData = {"fantasy-tileset.png",
       {{"@", 0, 18}}
@@ -59,7 +66,8 @@ function M:init (world, signal)
    --отображение затененных тайлов
    local shadowsData = {"fantasy-tileset_bg.png",
       {{".", 4, 3},
-      {"#", 2, 2}}
+      {"#", 2, 2},
+      {">", 5, 1}}
    }
 
    table.insert(self.layerList, {name = "shadows", data = layer (shadowsData)})

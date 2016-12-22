@@ -19,19 +19,34 @@ function M:init (font, pt, sign)
 
    --сохранить ссылку на обработчик сигналов
    self.signal = sign
-
+   
+   --лейблы для отображения игровых сообщений добавляются сразу и обрабатываются отдельно
+   --последнее сообщение
+   self.lastMessage = self:addLable ({name = "lastMessage", pos = vector (180, 10)})
+   --предпоследнее сообщение
+   self.preLastMessage = self:addLable ({name = "preLastMessage", pos = vector (180, 30)})
+   
    --регистрация изменения данных для лейбла
    self.signal:register (
       "hud",
       function (labelName, string)
-         --пройтись по всем лейблам,
-         for _, v in ipairs(self.lables) do
-            --если имя переданное совпадает с именем лейбла
-            if labelName == v.name then
-               --поменять отображаемое значение для него
-               v.value = string
-               break
+         -- обрабатываются все вызовы, кроме игровых сообщений
+         if labelName ~= "message" then
+            --пройтись по всем лейблам,
+            for _, v in ipairs(self.lables) do
+               --если имя переданное совпадает с именем лейбла
+               if labelName == v.name then
+                  --поменять отображаемое значение для него
+                  v.value = string
+                  break
+               end
             end
+         else -- обработка для игровых сообщений
+            --то, что было в последнем сообщении, переносим в предпоследнее,
+            self.preLastMessage.value = self.lastMessage.value
+                        
+            --а в предпоследнее вносим новые данные
+            self.lastMessage.value = string
          end
       end
    ) --регистрация данных
@@ -47,6 +62,9 @@ function M:addLable (data)
       pos = data.pos,         --позиция
       value = nil}            --данные для отображения
    )
+   
+   --на всякий случай, функция возвращает этот добавленный элемент
+   return self.lables[#self.lables]
 end
 
 --отрисовка hud на экране
