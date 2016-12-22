@@ -69,7 +69,7 @@ function love.load ()
    Hero:setToMap ()
 
    --загрузка пользовательского интерфейса
-   ui = hud ("neuropol_medium.ttf", 13, viewSignal)
+   ui = hud ("keyrusMedium.ttf", 18, viewSignal)
 
    --создать лейбл для отображения fps
    ui:addLable ({name = "fps", pos = vector (10, 10)})

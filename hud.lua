@@ -53,7 +53,10 @@ end
 function M:draw ()
    --установить фрифт, которым все надписи будут отображаться
    love.graphics.setFont (self.font)
+   --сохранить изначальный цвет
+   local r, g, b, a = love.graphics.getColor ()
 
+   love.graphics.setColor (255, 0, 0)
    --для примера, просто проверка того, что система работает
    --love.graphics.print ("Test! Проверка!", 10, 10)
 
@@ -63,6 +66,8 @@ function M:draw ()
          love.graphics.print (val.value, val.pos.x, val.pos.y)
       end
    end
+
+   love.graphics.setColor (r, g, b, a)
 end
 
 return M
