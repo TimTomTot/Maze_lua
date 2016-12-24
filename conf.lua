@@ -4,5 +4,5 @@ function love.conf (w)
 	w.window.width  = 960
 	w.window.height = 512
 
-	w.window.title 	= "0.0.2"
+	w.window.title 	= "0.0.3"
 end

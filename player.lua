@@ -19,10 +19,13 @@ function M:init (data)
    --регистрация действия с перемещением на лестнице
    self.signalView:register ("downSteer",
       function ()
-         print ("!")
+         --print ("!")
          if self.world:isSometsing (self.pos.x, self.pos.y) and
-            self.world.lavel:Get (self.pos.x, self.pos.y).objects.tile == ">" then
-            --body...
+            self.world.lavel:Get (self.pos.x, self.pos.y).odjects.tile == ">" then
+            --дать команду на генерацию нового уровня
+            self.signalView:emit ("generateMap")
+            --вывести сообщение об этом
+            self.signalView:emit ("hud", "message", "Ты перешел на новый уровень!")
          else
             self.signalView:emit ("hud", "message", "Здесь нет лестницы")
          end

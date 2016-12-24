@@ -36,7 +36,7 @@ local ui = {}
 
 function love.load ()
    --создать карту и запомнить ее на игровом мире
-   local newMap = maze:Generate (20, 30)
+   local newMap = maze:Generate (25, 40)
    GameWorld:addMap (newMap)
 
    --добавление лестницы на игровую карту
@@ -67,7 +67,7 @@ function love.load ()
          {"down", "moveDown"},
          {"right", "moveRight"},
          {"left", "moveLeft"},
-         {">", "downSteer"}
+         {".", "downSteer"}
       }
    }
    inputHandler = input (inputData)
@@ -77,6 +77,37 @@ function love.load ()
    viewSignal:register ("moveLeft", function () Hero:step (0, -1) end)
    viewSignal:register ("moveDown", function () Hero:step (1, 0) end)
    viewSignal:register ("moveUp", function () Hero:step (-1, 0) end)
+
+   --регестрация функции генерации новой карты
+   viewSignal:register ("generateMap",
+      function ()
+         local newMap = maze:Generate (25, 40)
+         GameWorld:addMap (newMap)
+
+         --добавление лестницы на игровую карту
+         -- первый вариант - в лоб
+
+         --размер карты
+         local im, jm = GameWorld:getMapSize ()
+
+         while true do
+            local rndi, rndj = math.random (im), math.random (jm)
+
+            if GameWorld:isEmpty (rndi, rndj, "object") then
+               GameWorld:addObject (
+                  {id = 1, tile = ">", message = "Это лестница на соседний этаж"},
+                  rndi,
+                  rndj)
+
+               break
+            end
+         end
+
+         --настоить отбражение
+         Viewer = viewer (GameWorld, viewSignal)
+
+         Hero:setToMap ()
+      end)
 
    --создать игрока
    Hero = player ({id = 1,
