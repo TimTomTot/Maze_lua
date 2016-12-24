@@ -2,6 +2,7 @@
 
 local class    = require "hump.class"
 local vector   = require "hump.vector"
+--local matrix   = require "utils.matrix"
 
 local M = class {}
 
@@ -14,6 +15,18 @@ function M:init (data)
 
    --радиус обзора
    self.fovR = data.R
+
+   --регистрация действия с перемещением на лестнице
+   self.signalView:register ("downSteer",
+      function ()
+         print ("!")
+         if self.world:isSometsing (self.pos.x, self.pos.y) and
+            self.world.lavel:Get (self.pos.x, self.pos.y).objects.tile == ">" then
+            --body...
+         else
+            self.signalView:emit ("hud", "message", "Здесь нет лестницы")
+         end
+      end)
 end
 
 --установить игрока на карту мира
@@ -63,6 +76,14 @@ function M:step (di, dj)
       self.world:solveFOV (self.pos.x,
          self.pos.y,
          self.fovR)
+
+      --если игрок стоит на токе, где что -то находится,
+      --то об этом выводится сообщение
+      if self.world:isSometsing (self.pos.x, self.pos.y) then
+         self.signalView:emit ("hud",
+            "message",
+            self.world:getMessage (self.pos.x, self.pos.y))
+      end
 
       --и оповестить об этом объект отображения
       self.signalView:emit ("setFramePos", self.pos.x, self.pos.y)

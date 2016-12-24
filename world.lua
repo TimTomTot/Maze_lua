@@ -35,10 +35,10 @@ function M:addMap (inputMap)
          --слой с картой
          map = {val = inputMap:Get (i, j),
             tile = inputMap:getTile (i, j)},
-         
+
          --слой с игровыми объектами
-         odjects = {},
-         
+         odjects = {present = false},
+
          --слой с игровыми персонажами
          creatures = {},
 
@@ -58,14 +58,14 @@ end
 function M:isEmpty (i, j, spec)
    --модификатор spec задается для поиска свободных участков только не занятых другими объектами
    local rez = true
-   local point = self.lavel:Get (i, j) 
-   
+   local point = self.lavel:Get (i, j)
+
    if not spec then
       if point.map.val == 1 then
          rez = false
       end
    elseif spec == "object" then
-      if point.map.val == 1 or point.object then
+      if point.map.val == 1 or point.objects then
          rez = false
       end
    end
@@ -85,9 +85,12 @@ end
 
 --функция добавления объекта на карту,
 --во многом аналогичная функции добавления существа
+--message - сообщение, которое отображается, когда игрок наступает на точку
 function M:addObject (obj, i, j)
+   self.lavel:Get (i, j).odjects.present = true
    self.lavel:Get (i, j).odjects.id = obj.id
    self.lavel:Get (i, j).odjects.tile = obj.tile
+   self.lavel:Get (i, j).odjects.message = obj.message
 end
 
 --сдвинуть существо
@@ -107,14 +110,14 @@ function M:getCell (i, j)
 
    --про карту
    table.insert (cellData, {self.mapNane, self.lavel:Get (i, j).map.tile})
-   
+
    --если на данной точке есть объект
    if self.lavel:Get (i, j).odjects.tile then
       table.insert (cellData, {self.objectsName, self.lavel:Get (i, j).odjects.tile})
    else
       table.insert (cellData, {self.objectsName, nil})
    end
-   
+
    --если есть данные о существе, то вернуть их
    if self.lavel:Get (i, j).creatures.tile then
       table.insert (cellData, {self.characterName, self.lavel:Get (i, j).creatures.tile})
@@ -125,11 +128,11 @@ function M:getCell (i, j)
    --данные о затенении этого участка
    --если участок затемнен, то передаем, что нужно отрисовать
    if self.lavel:Get (i, j).visible == "shadow" then
-      local tile 
-      
+      local tile
+
       if self.lavel:Get (i, j).odjects.tile then
          tile = self.lavel:Get (i, j).odjects.tile
-      else 
+      else
          tile = self.lavel:Get (i, j).map.tile
       end
       table.insert(cellData, {self.shadowsName, tile})
@@ -214,6 +217,29 @@ function M:fillShadow ()
    --просто залить всю карту тенями
    for i, j, val in self.lavel:Iterate () do
       val.visible = "shadow"
+   end
+end
+
+--функция, возвращающая true, если по указаной точке на карте есть что-то
+--кроме просто элеменов карты
+function M:isSometsing (i, j)
+   local rez = false
+
+   local point = self.lavel:Get (i, j)
+
+   if point.odjects.present then
+      rez = true
+
+      --return point.objects
+   end
+
+   return rez
+end
+
+--вернуть сообщение о том, что есть в этой точке
+function M:getMessage (i, j)
+   if self.lavel:Get (i, j).odjects.message then
+      return self.lavel:Get (i, j).odjects.message
    end
 end
 
