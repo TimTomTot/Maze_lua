@@ -62,7 +62,7 @@ function love.load ()
    Viewer = viewer (GameWorld, viewSignal)
 
    --настроить пользовательский ввод
-   local inputData = {signal = inputSignal,
+   local inputData = {signal = viewSignal,
       kayConform = {{"up", "moveUp"},
          {"down", "moveDown"},
          {"right", "moveRight"},
@@ -73,10 +73,10 @@ function love.load ()
    inputHandler = input (inputData)
 
    --связать пользовательский ввод со смещением изображения
-   inputSignal:register ("moveRight", function () Hero:step (0, 1) end)
-   inputSignal:register ("moveLeft", function () Hero:step (0, -1) end)
-   inputSignal:register ("moveDown", function () Hero:step (1, 0) end)
-   inputSignal:register ("moveUp", function () Hero:step (-1, 0) end)
+   viewSignal:register ("moveRight", function () Hero:step (0, 1) end)
+   viewSignal:register ("moveLeft", function () Hero:step (0, -1) end)
+   viewSignal:register ("moveDown", function () Hero:step (1, 0) end)
+   viewSignal:register ("moveUp", function () Hero:step (-1, 0) end)
 
    --создать игрока
    Hero = player ({id = 1,
