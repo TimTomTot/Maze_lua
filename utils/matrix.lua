@@ -149,7 +149,7 @@ local function test_Iterate ()
    for i, j, _ in testC:Iterate () do
       table.insert (rez1, {i, j})
    end
-   
+
 
 
    testC = nil

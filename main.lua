@@ -59,7 +59,8 @@ function love.load ()
    end
 
    --настоить отбражение
-   Viewer = viewer (GameWorld, viewSignal)
+   Viewer = viewer (viewSignal)
+   Viewer:setViewer (GameWorld)
 
    --настроить пользовательский ввод
    local inputData = {signal = viewSignal,
@@ -103,8 +104,8 @@ function love.load ()
             end
          end
 
-         --настоить отбражение
-         Viewer = viewer (GameWorld, viewSignal)
+         --настоить отбражение на новую карту
+         Viewer:setViewer (GameWorld)
 
          Hero:setToMap ()
       end)

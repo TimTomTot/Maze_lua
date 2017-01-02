@@ -9,9 +9,13 @@ local matrix   = require "utils.matrix"
 local M = class {}
 
 --конструктор
-function M:init (world, signal)
+function M:init (signal)
    --карта, к которой привязано отображение
-   self.world = world
+   self.world = nil
+
+   --запомнить максимальные размеры карты
+   --(после того, как будет задан новый объект отображения)
+   self.MaxMap = nil
 
    --обработчик сигналов для отображения
    self.signal = signal
@@ -24,11 +28,6 @@ function M:init (world, signal)
    self.signal:register ("moveFrame",
       function (i, j) self:moveFrame (i, j) end)
 
-   --запомнить максимальные размеры карты
-   self.MaxMap = vector (self.world:getMapSize ())
-
-   --print(self.world)
-
    --фрейм
    self.frame = matrix:New (16, 30)
 
@@ -38,30 +37,21 @@ function M:init (world, signal)
    --позиция отображения фрейма на экране
    self.drawPos = vector (0, 0)
 
-   --список слоев для отображения
-   self.layerList = {}
-
    --отображение карты
    local mapData = {"fantasy-tileset_b.png",
       {{".", 4, 3},
       {"#", 2, 2}}
    }
 
-   table.insert(self.layerList, {name = "map", data = layer (mapData)})
-
    --отображение объектов на карте
    local objectData = {"fantasy-tileset_b.png",
-      {{">", 5, 1}} -- лестница   
+      {{">", 5, 1}} -- лестница
    }
-   
-   table.insert(self.layerList, {name = "odjects", data = layer (objectData)})
-   
+
    --отображение игрока
    local playerData = {"fantasy-tileset.png",
       {{"@", 0, 18}}
    }
-
-   table.insert(self.layerList, {name = "creatures", data = layer (playerData)})
 
    --отображение затененных тайлов
    local shadowsData = {"fantasy-tileset_bg.png",
@@ -70,31 +60,60 @@ function M:init (world, signal)
       {">", 5, 1}}
    }
 
-   table.insert(self.layerList, {name = "shadows", data = layer (shadowsData)})
+   --создать объект с данными для слоев отображения
+   self.frameLayers = {}
+
+   --карта
+   table.insert(self.frameLayers,
+      {name = "map",
+      data = matrix:New (self.frame.N, self.frame.M),
+      lay = layer (mapData)})
+
+   --объекты
+   table.insert(self.frameLayers,
+      {name = "odjects",
+      data = matrix:New (self.frame.N, self.frame.M),
+      lay = layer (objectData)})
+
+   --существа
+   table.insert(self.frameLayers,
+      {name = "creatures",
+      data = matrix:New (self.frame.N, self.frame.M),
+      lay = layer (playerData)})
+
+   --тень
+   table.insert(self.frameLayers,
+      {name = "shadows",
+      data = matrix:New (self.frame.N, self.frame.M),
+      lay = layer (shadowsData)})
 end --init
+
+--функция настраивающая отображение на новый игровой уровень
+function M:setViewer (world)
+   --после генерации новой карты объект с ней передается в отображение.
+   self.world = world
+
+   --запомнить максимальные размеры карты
+   self.MaxMap = vector (self.world:getMapSize ())
+end
 
 --отображение на экран
 function M:draw ()
    --размерность отдельного тайла
    local tw, th = 32, 32
 
-   --пройтись по всем ячейкам в фрейме
-   for i, j, val in self.frame:Iterate () do
-      --для каждой точки получить cell из соответствующей точки карты
-      local curCell = self.world:getCell (i + self.framePos.x,
-         j + self.framePos.y)
-
-      --пройтись по всем уровням заданым в viewer
-      for _, val in ipairs (self.layerList) do
-         --рисуется только в уже видимой (посещенной) зоне
-         if curCell["visited"].tile then
-            --если для этого уровня есть тайл,
-            if curCell[val.name].tile then
-               love.graphics.draw (val.data.tileset,
-                  val.data:getQuad (curCell[val.name].tile),
-                  j * tw - tw + self.drawPos.y,
-                  i * th - th + self.drawPos.x)
-            end
+   --отображение идет на основе данных из наборов слоев отображения
+   for _, val in ipairs(self.frameLayers) do
+      --для каждого слоя
+      for i, j, v in val.data:Iterate () do
+         --пройтись по всем точкам из данных слоя и на основе того,
+         --какие тайлы там сохранены, отобразить на экране нужные рисунки
+         if v and v ~= 0 then
+            --print (i, j, v, val.name)
+            love.graphics.draw (val.lay.tileset,
+               val.lay:getQuad (v),
+               j * tw - tw + self.drawPos.y,
+               i * th - th + self.drawPos.x)
          end
       end
    end
@@ -136,6 +155,40 @@ function M:setFramePos (i, j)
 
    -- проверить ограничение
    self:checkFrame ()
+
+   --теперь нужно обновить данные о слоях отображения, чтобы реже обращаться
+   --к объекту карты - только при перемещении игрока, а не каждый тик
+   self:updateViewer ()
 end
+
+--функция обновления данных о том, что нужно отображать на разных уровнях
+function M:updateViewer ()
+   --пройтись по всему фрейму и для каждой точки получить объект Cell
+   --из карты. разобрать, что получилось из этого объекта и соответственно,
+   --заполнить слои для отображения.
+   for i, j, _ in self.frame:Iterate () do
+      local curCell = self.world:getCell (
+         i + self.framePos.x,
+         j + self.framePos.y)
+
+      --если данная ячейка уже была видима, то определяются данные для
+      --отображения
+      if curCell["visited"].tile then
+         for _, val in ipairs(self.frameLayers) do
+            --для каждого уровня занести, что имеем
+            if curCell[val.name].tile then
+               val.data:Set (i, j, curCell[val.name].tile)
+            else
+               val.data:Set (i, j, nil)
+            end
+         end
+      else
+         --если данная точка еще не была разведана
+         for _, val in ipairs(self.frameLayers) do
+            val.data:Set (i, j, nil)
+         end
+      end
+   end
+end --updateViewer
 
 return M
