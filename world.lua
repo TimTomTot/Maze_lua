@@ -148,7 +148,14 @@ function M:getCell (i, j)
    end
 
    --передаются в него
-   local outputCell = cell (cellData)
+   --local outputCell = cell (cellData)
+
+   --реализация без объекта cell
+   local outputCell = {}
+
+   for _, v in ipairs(cellData) do
+      outputCell[v[1]] = {tile = v[2]}
+   end
 
    return outputCell
 end

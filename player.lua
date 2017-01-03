@@ -11,23 +11,23 @@ function M:init (data)
    self.ID = data.id
    self.tile = data.tile
    self.world = data.world
-   self.signalView = data.signalView
+   self.signal = data.signalView
 
    --радиус обзора
    self.fovR = data.R
 
    --регистрация действия с перемещением на лестнице
-   self.signalView:register ("downSteer",
+   self.signal:register ("downSteer",
       function ()
          --print ("!")
          if self.world:isSometsing (self.pos.x, self.pos.y) and
             self.world.lavel:Get (self.pos.x, self.pos.y).odjects.tile == ">" then
             --дать команду на генерацию нового уровня
-            self.signalView:emit ("generateMap")
+            self.signal:emit ("generateMap")
             --вывести сообщение об этом
-            self.signalView:emit ("hud", "message", "Ты перешел на новый уровень!")
+            self.signal:emit ("hud", "message", "Ты перешел на новый уровень!")
          else
-            self.signalView:emit ("hud", "message", "Здесь нет лестницы")
+            self.signal:emit ("hud", "message", "Здесь нет лестницы")
          end
       end)
 end
@@ -56,7 +56,7 @@ function M:setToMap ()
             self.fovR)
 
          --установить отображение на игроке
-         self.signalView:emit ("setFramePos", rndPosI, rndPosJ)
+         self.signal:emit ("setFramePos", rndPosI, rndPosJ)
 
          break
       end
@@ -83,16 +83,16 @@ function M:step (di, dj)
       --если игрок стоит на токе, где что -то находится,
       --то об этом выводится сообщение
       if self.world:isSometsing (self.pos.x, self.pos.y) then
-         self.signalView:emit ("hud",
+         self.signal:emit ("hud",
             "message",
             self.world:getMessage (self.pos.x, self.pos.y))
       end
 
       --и оповестить об этом объект отображения
-      self.signalView:emit ("setFramePos", self.pos.x, self.pos.y)
+      self.signal:emit ("setFramePos", self.pos.x, self.pos.y)
    else
       --сообщение о том, что дальше продвинуться невозможно
-      self.signalView:emit ("hud", "message", "Здесь не пройти!")
+      self.signal:emit ("hud", "message", "Здесь не пройти!")
    end
 end
 
