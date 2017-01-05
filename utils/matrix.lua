@@ -76,7 +76,7 @@ function M:Write ()
       io.write ("\n")
 
       for j = 1, self.M do
-         io.write ("  " .. tostring (self[(i - 1) * self.M + j]))
+         io.write ("" .. tostring (self[(i - 1) * self.M + j]))
       end
    end
 

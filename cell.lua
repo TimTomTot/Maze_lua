@@ -1,18 +1,54 @@
--- Модуль с ячейкой 
-
---ячейка содержит данные о том, что находится в данной точке карты.
--- в виде таблицы (словаря), ключем к которой будет название слоя, а данными - какой тайл стоит на этом слое
--- данные в ячейку передаются в виде простой таблицы:
--- {{"map", "#"},
---  {"creatures", "@"}}
+-- Модуль с ячейкой карты
 
 local class = require "hump.class"
 
 local M = class {}
 
-function M:init (data)
-   for _, val in ipairs (data) do
-      self[val[1]] = {tile = val[2]}
+--генерация новой ячейки на основе данных о протоячейки
+function M:init (data, extra)
+   --имя
+   --тайл
+   --данные о объекте на ячейке
+   --данные о существе на ячейке
+   --флаги ячейки
+   --функция выполняемая при наступании на ячейку
+   --функция выполняемая при применении действия над ячейкой
+
+   self.name = data.name
+   self.tile = data.tile
+   self.object = {}
+   self.creature = {}
+
+   --добавление уникальных данных для каждой ячейки
+   if next (data.flag) then
+      self.flag = {}
+
+      for _, v in ipairs(data.flag) do
+         table.insert(self.flag, v)
+      end
+   else
+      self.flag = {}
+   end
+
+   --self.flag = data.flag or {}
+   self.stand = data.stand or function (creature) end
+   self.action = data.action or function (creature, action) end
+
+   --обработка дополнительтных данных при генерации ячейки
+   --ячейка затемнена
+   if extra and extra.darkened then
+      --print ("!")
+      self.flag[LV_DARKENED] = true
+      --self.flag[LV_EXPLORED] = false
+   end
+end
+
+--проверка, есть ли в ячейке существо
+function M:isCreature ()
+   if next (self.creature) then
+      return true
+   else
+      return false
    end
 end
 

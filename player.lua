@@ -16,6 +16,7 @@ function M:init (data)
    --радиус обзора
    self.fovR = data.R
 
+   --[[
    --регистрация действия с перемещением на лестнице
    self.signal:register ("downSteer",
       function ()
@@ -30,6 +31,7 @@ function M:init (data)
             self.signal:emit ("hud", "message", "Здесь нет лестницы")
          end
       end)
+   --]]
 end
 
 --установить игрока на карту мира
@@ -37,7 +39,8 @@ function M:setToMap ()
    --получить размер карты для дальнейших поисков позиции
    local mapN, mapM = self.world:getMapSize ()
 
-   --случайным образом выбирать точки на карте, пока не попаду на пустую
+   --print ("N ", mapN, " M " , mapM)
+
    while true do
       local rndPosI, rndPosJ = math.random(mapN), math.random(mapM)
 
@@ -80,6 +83,7 @@ function M:step (di, dj)
          self.pos.y,
          self.fovR)
 
+      --[[
       --если игрок стоит на токе, где что -то находится,
       --то об этом выводится сообщение
       if self.world:isSometsing (self.pos.x, self.pos.y) then
@@ -87,9 +91,13 @@ function M:step (di, dj)
             "message",
             self.world:getMessage (self.pos.x, self.pos.y))
       end
+      --]]
 
       --и оповестить об этом объект отображения
       self.signal:emit ("setFramePos", self.pos.x, self.pos.y)
+
+      --выполнить функцию, предусмотренную картой для этой точки
+      --self.world:Get(self.pos.x, self.pos.y).stand (self)
    else
       --сообщение о том, что дальше продвинуться невозможно
       self.signal:emit ("hud", "message", "Здесь не пройти!")

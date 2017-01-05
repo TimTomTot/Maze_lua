@@ -1,5 +1,8 @@
 --Добавление функций от love2d
 
+--игровые константы
+require "const"
+
 local maze     = require "Maze.Maze"
 local viewer   = require "view.viewer"
 local world    = require "world"
@@ -10,8 +13,8 @@ local player   = require "player"
 local hud      = require "hud"
 
 --подготовка генератора случайных чисел
-math.randomseed (os.time ())
---math.randomseed (15)
+--math.randomseed (os.time ())
+math.randomseed (15)
 
 --мир игры
 local GameWorld = world ()
@@ -35,6 +38,7 @@ local Hero = {}
 local ui = {}
 
 function love.load ()
+   --[[
    --создать карту и запомнить ее на игровом мире
    local newMap = maze:Generate (25, 40)
    GameWorld:addMap (newMap)
@@ -57,6 +61,40 @@ function love.load ()
          break
       end
    end
+   --]]
+
+   --карта генерируется на основе строки:
+   local someMap = [[
+########################################
+#......................................#
+#......................................#
+#......................................#
+#......................................#
+#......................................#
+#......................................#
+#......................................#
+#######################.################
+#......................................#
+#......................................#
+#......................................#
+#......................................#
+#......................................#
+#......................................#
+#......................................#
+#......................................#
+#......................................#
+#......................................#
+#......................................#
+#......................................#
+#......................................#
+#......................................#
+#......................................#
+#......................................#
+#......................................#
+########################################
+]]
+
+   GameWorld:parseMap (someMap)
 
    --настоить отбражение
    Viewer = viewer (viewSignal)
@@ -67,8 +105,8 @@ function love.load ()
       kayConform = {{"up", "moveUp"},
          {"down", "moveDown"},
          {"right", "moveRight"},
-         {"left", "moveLeft"},
-         {".", "downSteer"}
+         {"left", "moveLeft"} --,
+         --{".", "downSteer"}
       }
    }
    inputHandler = input (inputData)
@@ -79,6 +117,7 @@ function love.load ()
    viewSignal:register ("moveDown", function () Hero:step (1, 0) end)
    viewSignal:register ("moveUp", function () Hero:step (-1, 0) end)
 
+   --[[
    --регестрация функции генерации новой карты
    viewSignal:register ("generateMap",
       function ()
@@ -109,6 +148,7 @@ function love.load ()
 
          Hero:setToMap ()
       end)
+   --]]
 
    --создать игрока
    Hero = player ({id = 1,
@@ -146,4 +186,8 @@ end
 function love.draw ()
    Viewer:draw ()
    ui:draw ()
+end
+
+function love.quit ()
+   -- body...
 end

@@ -69,11 +69,13 @@ function M:init (signal)
       data = matrix:New (self.frame.N, self.frame.M),
       lay = layer (mapData)})
 
+   ---[[
    --объекты
    table.insert(self.frameLayers,
-      {name = "odjects",
+      {name = "objects",
       data = matrix:New (self.frame.N, self.frame.M),
       lay = layer (objectData)})
+   --]]
 
    --существа
    table.insert(self.frameLayers,
@@ -171,16 +173,28 @@ function M:updateViewer ()
          i + self.framePos.x,
          j + self.framePos.y)
 
+      --напишем, что отобразилось
+      --print(curCell["visited"].tile)
+
+      --print (unpack (curCell))
+      if not curCell then
+         error ("curCell = nil")
+      end
+
       --если данная ячейка уже была видима, то определяются данные для
       --отображения
       if curCell["visited"].tile then
          for _, val in ipairs(self.frameLayers) do
             --для каждого уровня занести, что имеем
+            --print (val.name)
             if curCell[val.name].tile then
                val.data:Set (i, j, curCell[val.name].tile)
             else
                val.data:Set (i, j, nil)
             end
+
+            --отобразить, что получилось для слоя с затемнением
+            --val.data:Write ()
          end
       else
          --если данная точка еще не была разведана
@@ -189,6 +203,9 @@ function M:updateViewer ()
          end
       end
    end
+
+   --отобразить, что получилось для слоя с затемнением
+
 end --updateViewer
 
 return M
