@@ -16,19 +16,19 @@ function M:init (data)
    --радиус обзора
    self.fovR = data.R
 
-   --[[
+   ---[[
    --регистрация действия с перемещением на лестнице
    self.signal:register ("downSteer",
       function ()
-         --print ("!")
-         if self.world:isSometsing (self.pos.x, self.pos.y) and
-            self.world.lavel:Get (self.pos.x, self.pos.y).odjects.tile == ">" then
-            --дать команду на генерацию нового уровня
-            self.signal:emit ("generateMap")
-            --вывести сообщение об этом
-            self.signal:emit ("hud", "message", "Ты перешел на новый уровень!")
-         else
-            self.signal:emit ("hud", "message", "Здесь нет лестницы")
+         --для точки, на которой стоит игрок вызывается функция action
+         local rez = self.world.lavel:Get(self.pos.x, self.pos.y).action (self,
+            "downstairs")
+
+         --если action не задан, то выдается сообщение о том, что лестницы нет
+         if not rez then
+            self.signal:emit ("hud",
+               "message",
+               "Здесь нет лестницы!")
          end
       end)
    --]]
@@ -82,22 +82,11 @@ function M:step (di, dj)
       self.world:solveFOV (self.pos.x,
          self.pos.y,
          self.fovR)
-
-      --[[
-      --если игрок стоит на токе, где что -то находится,
-      --то об этом выводится сообщение
-      if self.world:isSometsing (self.pos.x, self.pos.y) then
-         self.signal:emit ("hud",
-            "message",
-            self.world:getMessage (self.pos.x, self.pos.y))
-      end
-      --]]
-
       --и оповестить об этом объект отображения
       self.signal:emit ("setFramePos", self.pos.x, self.pos.y)
 
       --выполнить функцию, предусмотренную картой для этой точки
-      --self.world:Get(self.pos.x, self.pos.y).stand (self)
+      self.world.lavel:Get(self.pos.x, self.pos.y).stand (self)
    else
       --сообщение о том, что дальше продвинуться невозможно
       self.signal:emit ("hud", "message", "Здесь не пройти!")

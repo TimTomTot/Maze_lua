@@ -31,8 +31,8 @@ function M:init (data, extra)
    end
 
    --self.flag = data.flag or {}
-   self.stand = data.stand or function (creature) end
-   self.action = data.action or function (creature, action) end
+   self.stand = data.stand or function (creature)  end
+   self.action = data.action or function (creature, action) return false end
 
    --обработка дополнительтных данных при генерации ячейки
    --ячейка затемнена

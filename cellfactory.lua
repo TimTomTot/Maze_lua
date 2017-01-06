@@ -29,6 +29,7 @@ function M:addCells ()
       flag = {}
    }
    wallData.flag[LV_SOLID] = true
+   wallData.flag[LV_OPAQUE] = true
 
    table.insert(self.cellList, wallData)
 
@@ -38,7 +39,7 @@ function M:addCells ()
       tile = ".",
       flag = {}
    }
-   floorData.flag[LV_TRANSPARENT] = true
+   --floorData.flag[LV_TRANSPARENT] = true
 
    table.insert(self.cellList, floorData)
 
@@ -63,10 +64,12 @@ function M:addCells ()
                "hud",
                "message",
                "Ты перешел на новый этаж!")
+
+         return true
          end
       end
    }
-   stairsData.flag[LV_TRANSPARENT] = true
+   --stairsData.flag[LV_TRANSPARENT] = true
 
    table.insert(self.cellList, stairsData)
 
