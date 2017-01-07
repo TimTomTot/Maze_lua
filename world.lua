@@ -99,19 +99,9 @@ function M:isEmpty (i, j)
    --то счиаем ее занятой
    local curCell = self.lavel:Get (i, j)
 
-   --print (i, j, curCell, curCell.name, curCell.flag[LV_SOLID], curCell:isCreature ())
-
-   --[[
-   if curCell.name == "floor" then
-      print(curCell.flag[LV_SOLID])
-   end
-   --]]
-
    if curCell.flag[LV_SOLID] or curCell:isCreature () then
       rez = false
    end
-
-   --print(rez)
 
    return rez
 end
@@ -206,27 +196,6 @@ function M:solveFOV (i, j, R)
    self.lavel:Get(i, j).flag[LV_DARKENED] = false
    self.lavel:Get(i, j).flag[LV_EXPLORED] = true
 
-   --[[
-   --нарисуем текущую ситуацию
-   for i, j, v in self.lavel:Iterate () do
-      if j == 1 then
-         io.write ("\n")
-      end
-
-      local ch
-
-      if v.flag[LV_DARKENED] then
-         ch = "#"
-      else
-         ch = "."
-      end
-
-      io.write (ch)
-   end
-
-   io.write ("\n")
-   --]]
-
    ---[[
    --создать список точек, до которых необходимо проложить видимость
    local viewPointList = {}
@@ -253,9 +222,15 @@ function M:solveFOV (i, j, R)
 
       --проверка на выход за границы
       if self.lavel:IsInside (x, y) then
-            if self.lavel:Get(x, y).flag[LV_OPAQUE] then
-               addVisible.empty = false
-            end
+         --[[
+         if self.lavel:Get(x, y).name == "closeDoor" then
+            print(self.lavel:Get(x, y).flag[LV_OPAQUE])
+         end
+         --]]
+
+         if self.lavel:Get(x, y).flag[LV_OPAQUE] then
+            addVisible.empty = false
+         end
       end
    end
 

@@ -31,7 +31,7 @@ function M:init (data, extra)
    end
 
    --self.flag = data.flag or {}
-   self.stand = data.stand or function (creature)  end
+   self.stand = data.stand or function (creature, thisCell) end
    self.action = data.action or function (creature, action) return false end
 
    --обработка дополнительтных данных при генерации ячейки
@@ -39,6 +39,10 @@ function M:init (data, extra)
    if extra and extra.darkened then
       --print ("!")
       self.flag[LV_DARKENED] = true
+
+      if not self.flag[LV_OPAQUE] then
+         self.flag[LV_OPAQUE] = false
+      end
       --self.flag[LV_EXPLORED] = false
    end
 end

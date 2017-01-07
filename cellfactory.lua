@@ -48,17 +48,19 @@ function M:addCells ()
       name = "stairs",
       tile = ">",
       flag = {},
-      stand = function (creature) --что происходит при наступании на лестницу
+      stand = function (creature, thisCell) --что происходит при наступании на лестницу
          --когда игрок наступает на лестницу
          creature.signal:emit (
             "hud",
             "message",
             "Это лестница на соседний этаж")
+
+         --return thisCell
       end,
       --что происходит при выполнении дейстия
       action = function (creature, action)
          --если действие - переход по лестнице
-         if action == "downstairs" then
+         if action == AC_DOWNSTAIRS then
             creature.signal:emit ("generateMap")
             creature.signal:emit (
                "hud",
@@ -67,20 +69,88 @@ function M:addCells ()
 
          return true
          end
+
+         return false
       end
    }
    --stairsData.flag[LV_TRANSPARENT] = true
 
    table.insert(self.cellList, stairsData)
 
-   --[[
-   --проверим, что получилось с флагами для протоячеек
-   for _, val in ipairs(self.cellList) do
-      print (val.name,
-         val.flag[LV_SOLID],
-         val.flag[LV_TRANSPARENT])
-   end
-   --]]
+   --открытая дверь
+   local openDoorData = {
+      name = "openDoor",
+      tile = "-",
+      flag = {},
+      stand = function (creature, thisCell)
+         --сообщаем, что игрок находится на открытой дверью
+         creature.signal:emit (
+            "hud",
+            "message",
+            "Это открытая дверь")
+
+         --return thisCell
+      end,
+      action = function (creature, action, thisCell)
+         if action == AC_CLOSEDOOR then
+            thisCell.name = self.cellList[5].name
+            thisCell.tile = self.cellList[5].tile
+            thisCell.stand = self.cellList[5].stand
+            thisCell.action = self.cellList[5].action
+            thisCell.flag[LV_OPAQUE] = true
+
+            --вывести сообщение о открытии двери
+            creature.signal:emit (
+               "hud",
+               "message",
+               "Ты закрываешь дверь")
+
+            return true
+         end
+
+         return false
+      end
+   }
+   openDoorData.flag[LV_SOLID] = false
+
+   table.insert(self.cellList, openDoorData)
+
+   --закрытая дверь
+   local closeDoorData = {
+      name = "closeDoor",
+      tile = "+",
+      flag = {},
+      stand = function (creature, thisCell)
+         thisCell.name = openDoorData.name
+         thisCell.tile = openDoorData.tile
+         thisCell.stand = openDoorData.stand
+         thisCell.action = openDoorData.action
+         thisCell.flag[LV_OPAQUE] = false
+         --thisCell.flag[LV_DARKENED] = false
+         --thisCell.flag[LV_EXPLORED] = true
+
+         --вывести сообщение о открытии двери
+         creature.signal:emit (
+            "hud",
+            "message",
+            "Ты открываешь дверь")
+
+         --return thisCell
+      end,
+      action = function (creature, action, thisCell)
+         if action == AC_OPENDOOR then
+            self.cellList[5].stand (creature, thisCell)
+
+            return true
+         end
+
+         return false
+      end
+   }
+   closeDoorData.flag[LV_SOLID] = false
+   closeDoorData.flag[LV_OPAQUE] = true
+
+   table.insert(self.cellList, closeDoorData)
 end
 
 --генерация новой ячейки по имени или по тайлу
@@ -99,24 +169,7 @@ function M:newCell (name, extra)
 
    --если есть, то на основе ее сгенерировать новую ячейку и вернуть ее
    if protCell then
-
-      --[[
-      --проверим, что же хранится в флгах ячейки
-      if protCell.name == "floor" then
-         print(protCell.flag[LV_SOLID],
-            protCell.flag[LV_TRANSPARENT])
-      end
-      --]]
-
       local someCell = cell (protCell, extra)
-
-      --[[
-      --проверим, что же хранится в флгах ячейки
-      if someCell.name == "floor" then
-         print(someCell.flag[LV_SOLID],
-            someCell.flag[LV_TRANSPARENT])
-      end
-      --]]
 
       return someCell
    else
