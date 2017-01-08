@@ -1,7 +1,7 @@
 --модуль с фабрикой для генерации объектов с ячейками карты
 
-local class = require "hump.class"
-local cell = require "cell"
+local class    = require "hump.class"
+local cell     = require "world.cell"
 
 local M = class {}
 

@@ -3,7 +3,7 @@
 local class    = require "hump.class"
 local vector   = require "hump.vector"
 local layer    = require "view.layer"
-local cell     = require "cell"
+local cell     = require "world.cell"
 local matrix   = require "utils.matrix"
 
 local M = class {}
@@ -38,7 +38,7 @@ function M:init (signal)
    self.drawPos = vector (0, 0)
 
    --отображение карты
-   local mapData = {"fantasy-tileset_b.png",
+   local mapData = {"content/fantasy-tileset_b.png",
       {{".", 4, 3},
       {"#", 2, 2},
       {">", 5, 1},
@@ -47,17 +47,17 @@ function M:init (signal)
    }
 
    --отображение объектов на карте
-   local objectData = {"fantasy-tileset_b.png",
+   local objectData = {"content/fantasy-tileset_b.png",
       {{">", 5, 1}} -- лестница
    }
 
    --отображение игрока
-   local playerData = {"fantasy-tileset.png",
+   local playerData = {"content/fantasy-tileset.png",
       {{"@", 0, 18}}
    }
 
    --отображение затененных тайлов
-   local shadowsData = {"fantasy-tileset_bg.png",
+   local shadowsData = {"content/fantasy-tileset_bg.png",
       {{".", 4, 3},
       {"#", 2, 2},
       {">", 5, 1},

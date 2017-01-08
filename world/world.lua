@@ -1,10 +1,9 @@
 --еще один вариант модуля world, без лифней сложности
 
-local class    = require "hump.class"
-local matrix   = require "utils.matrix"
---local cell     = require "cell"
-local brez     = require "utils.brez"
-local cellfactory = require "cellfactory"
+local class          = require "hump.class"
+local matrix         = require "utils.matrix"
+local brez           = require "utils.brez"
+local cellfactory    = require "world.cellfactory"
 
 local M = class {}
 
