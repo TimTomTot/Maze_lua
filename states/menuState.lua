@@ -72,7 +72,7 @@ function st_startMenu:init ()
       name = "gameMenu",
       lable = "Играть",
       selected = true,
-      action = function () end
+      action = function () gamestate.switch(st_gameMain) end
    }
 
    table.insert(mainMenu, gameMenuData)

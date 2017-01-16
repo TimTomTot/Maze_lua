@@ -1,6 +1,9 @@
 --проверка работы игровых состояний
-require "menuState"
-require "quitState"
+require "const"
+
+require "states.menuState"
+require "states.quitState"
+require "states.gameplayState"
 
 gamestate = require "hump.gamestate"
 
