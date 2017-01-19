@@ -61,21 +61,31 @@ function st_startMenu:init ()
    menuUI:addLable({name = "title", pos = vector (100, 10)})
 
    --пункты меню
-   menuUI:addLable({name = "gameMenu", pos = vector (100, 100)})
-   menuUI:addLable({name = "quitMenu", pos = vector (100, 120)})
+   menuUI:addLable({name = "gameMenuRnd", pos = vector (100, 100)})
+   menuUI:addLable({name = "gameMenuManual", pos = vector (100, 120)})
+   menuUI:addLable({name = "quitMenu", pos = vector (100, 140)})
 
    --задаем данные для меню
    --данные в виде - лэйбл - что отображается в этом пункте меню
    --признак того, что меню выбрано
    --функция, которая вызывается, когда текущий пункт принимается
-   local gameMenuData = {
-      name = "gameMenu",
-      lable = "Играть",
+   local gameMenuDataRnd = {
+      name = "gameMenuRnd",
+      lable = "Играть на случайной карте",
       selected = true,
-      action = function () gamestate.switch(st_gameMain) end
+      action = function () gamestate.switch(st_gameMain, {map = MP_RND}) end
    }
 
-   table.insert(mainMenu, gameMenuData)
+   table.insert(mainMenu, gameMenuDataRnd)
+
+   local gameMenuManual = {
+      name = "gameMenuManual",
+      lable = "Играть на заданой карте",
+      selected = false,
+      action = function () gamestate.switch(st_gameMain, {map = MP_MANUAL}) end
+   }
+
+   table.insert(mainMenu, gameMenuManual)
 
    local quitMenuData = {
       name = "quitMenu",

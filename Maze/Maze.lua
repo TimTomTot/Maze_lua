@@ -151,6 +151,30 @@ function M:Parse (map)
    io.write ("\n")
 end
 
+--функция преобразующая лабиринт в строку, чтобы работать с ним как с
+--самодельным лабиринтом
+function M:maptostring (map)
+   local resultStr = ""
+
+   for i, j, v in map:Iterate() do
+      if j == 1 then
+         resultStr = resultStr .. "\n"
+      end
+
+      local char
+
+      if v == 0 then
+         char = "."
+      elseif v == 1 then
+         char = "#"
+      end
+
+      resultStr = resultStr .. char
+   end
+
+   return resultStr
+end
+
 -------------------------------------
 --[[           Тесты             ]]--
 -------------------------------------
@@ -162,7 +186,9 @@ local function test_Maze ()
    local map = M:Generate (20, 60)
 
    --map:Write ()
-   M:Parse (map)
+   --M:Parse (map)
+
+   print(M:maptostring(map))
 end
 
 return M

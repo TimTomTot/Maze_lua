@@ -103,6 +103,7 @@ function st_gameMain:init()
    viewSignal:register ("generateMap",
       function ()
          GameWorld:parseMap (self.someMap)
+         Viewer:setViewer (GameWorld)
          Hero:setToMap ()
       end)
    --]]
@@ -124,15 +125,31 @@ function st_gameMain:init()
    ui:addLable ({name = "fps", pos = vector (10, 10)})
 end
 
-function st_gameMain:enter (previous)
+function st_gameMain:enter (previous, extra)
    --если в это состояние переходить из состояния меню, то загружается карта
    if previous == st_startMenu then
       --GameWorld:parseMap (self.someMap)
       --Hero:setToMap ()
+
+      local currentMap
+      local message
+
+      if extra.map == MP_RND then
+         currentMap = maze:maptostring(maze:Generate (30, 60))
+         message = "Ты вошел в случайный лабиринт"
+      elseif extra.map == MP_MANUAL then
+         currentMap = self.someMap
+         message = "Ты вошел в известный лабиринт"
+      end
+
+      GameWorld:parseMap (currentMap)
+      Viewer:setViewer (GameWorld)
+      Hero:setToMap ()
+
       viewSignal:emit(
          "hud",
          "message",
-         "Ты зашел в лабиринт")
+         message)
    end
 end
 
