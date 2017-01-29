@@ -46,11 +46,18 @@ function M:parseMap (str)
       columnIndex = 1
 
       for character in row:gmatch (".") do
-         --создать затемненную ячейку
+         --создать ячейку
+         local tile, item = self.factory:newCell (character, {darkened = true})
+
          self.lavel:Set (
             rowIndex,
             columnIndex,
-            self.factory:newCell (character, {darkened = true}))
+            tile)
+
+         -- если в точке есть не только элементы карты
+         if item then
+            -- устанавливаем на это место нужный объект
+         end
 
          columnIndex = columnIndex + 1
       end

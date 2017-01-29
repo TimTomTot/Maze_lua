@@ -158,6 +158,9 @@ function M:newCell (name, extra)
    --определить по имени (или по тайлу) есть ли такая протоячейка
    local protCell = nil
 
+   --дополнительные данные - тайл для рисовки не частей карты
+   local outputTile = nil
+
    for _, v in ipairs(self.cellList) do
       --print (name)
 
@@ -167,15 +170,14 @@ function M:newCell (name, extra)
       end
    end
 
-   --если есть, то на основе ее сгенерировать новую ячейку и вернуть ее
-   if protCell then
-      local someCell = cell (protCell, extra)
+   -- если не найдена ни одна ячейка, то задается просто пол
+   if not protCell then
+      protCell = self.cellList[2]
 
-      return someCell
-   else
-      error ("Нет протоячейки для переданных данных: "
-         .. name)
+      outputTile = name
    end
+
+   return cell (protCell, extra), outputTile
 end
 
 return M
