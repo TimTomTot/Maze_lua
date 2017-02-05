@@ -47,8 +47,8 @@ function M:init (signal)
    }
 
    --отображение объектов на карте
-   local objectData = {"content/fantasy-tileset_b.png",
-      {{">", 5, 1}} -- лестница
+   local objectData = {"content/fantasy-tileset.png",
+      {{"|", 0, 5}} -- лестница
    }
 
    --отображение игрока
@@ -63,6 +63,11 @@ function M:init (signal)
       {">", 5, 1},
       {"+", 6, 2},
       {"-", 5, 3}}
+   }
+
+   --отображение затененых предметов
+   local shadowsItem = {"content/fantasy-tileset_bg.png",
+      {{"|", 0, 5}}
    }
 
    --создать объект с данными для слоев отображения
@@ -93,6 +98,13 @@ function M:init (signal)
       {name = "shadows",
       data = matrix:New (self.frame.N, self.frame.M),
       lay = layer (shadowsData)})
+
+   --затененые объекты
+   table.insert(self.frameLayers,
+      {name = "shadowsObjects",
+      data = matrix:New(self.frame.N, self.frame.M),
+      lay = layer(shadowsItem)}
+   )
 end --init
 
 --функция настраивающая отображение на новый игровой уровень

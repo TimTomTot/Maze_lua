@@ -11,9 +11,32 @@ function M:init()
 end
 
 function M:addItems()
-   -- body...
+   -- бутылочка (пробный предмет)
+   local bottleData = {
+      name = "bottle",
+      tile = "|"
+   }
+
+   table.insert(self.itemList, bottleData)
 end
 
 function M:newItem(name)
-   -- body...
+   local protoitem = nil
+
+   for _, val in ipairs(self.itemList) do
+      if name == val.name or val.tile then
+         protoitem = val
+         break
+      end
+   end
+
+   --создать на основе протообъекта настоящий объект и вернуть его
+   local resItem = {
+      name = protoitem.name,
+      tile = protoitem.tile
+   }
+
+   return resItem
 end
+
+return M

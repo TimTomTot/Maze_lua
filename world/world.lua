@@ -4,6 +4,7 @@ local class          = require "hump.class"
 local matrix         = require "utils.matrix"
 local brez           = require "utils.brez"
 local cellfactory    = require "world.cellfactory"
+local itemfactory    = require "world.itemfactory"
 
 local M = class {}
 
@@ -18,11 +19,15 @@ function M:init ()
       "objects",
       "creatures",
       "shadows",
+      "shadowsObjects",
       "visited"
    }
 
    --фабрика для генерации ячеек карты
    self.factory = cellfactory ()
+
+   --фабрика для генерации предметов на карте
+   self.items = itemfactory()
 
    --уровень представляет из себя массив типа matrix,
    --в каждой точке которого находится таблица с объектами, наполняющими уровень
@@ -57,6 +62,9 @@ function M:parseMap (str)
          -- если в точке есть не только элементы карты
          if item then
             -- устанавливаем на это место нужный объект
+            local newItem = self.items:newItem(tile)
+
+            self.lavel:Get(rowIndex, columnIndex).object = newItem
          end
 
          columnIndex = columnIndex + 1
@@ -149,7 +157,7 @@ function M:getCell (i, j)
 
    --объекты
    table.insert(data,
-      {self.names[2], nil})
+      {self.names[2], self.lavel:Get(i, j).object.tile or nil})
 
    --существо
    table.insert(data,
@@ -158,6 +166,7 @@ function M:getCell (i, j)
    --затенение
    if self.lavel:Get(i, j).flag[LV_DARKENED] then
       --print ("(", i, ";", j, ")", "darkned")
+      -- отрисовка элементов карты
       table.insert(data,
          {self.names[4], self.lavel:Get(i, j).tile})
    else
@@ -166,13 +175,22 @@ function M:getCell (i, j)
          {self.names[4], nil})
    end
 
+   --объекты в затенении
+   if self.lavel:Get(i,j).flag[LV_DARKENED] then
+      table.insert(data,
+         {self.names[5], self.lavel:Get(i, j).object.tile or nil})
+   else
+      table.insert(data,
+         {self.names[5], nil})
+   end
+
    --разведана ячейка или нет
    if not self.lavel:Get(i, j).flag[LV_EXPLORED] then
       table.insert(data,
-         {self.names[5], nil})
+         {self.names[6], nil})
    else
       table.insert(data,
-         {self.names[5], "*"})
+         {self.names[6], "*"})
    end
 
    --возвращаем таблицу с тайлами

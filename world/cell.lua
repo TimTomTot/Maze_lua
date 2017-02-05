@@ -56,4 +56,13 @@ function M:isCreature ()
    end
 end
 
+--проверка, есть ли предмет
+function M:isObject()
+   if next(self.object) then
+      return true
+   else
+      return false
+   end
+end
+
 return M
