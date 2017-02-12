@@ -1,5 +1,6 @@
 --сосояние игры с финальной заставкой
 
+local menu     = require "menu"
 local signal   = require "hump.signal"
 local input    = require "input"
 local hud      = require "view.hud"
@@ -8,58 +9,48 @@ local vector   = require "hump.vector"
 st_quitMenu = {}
 
 --модули, необходимые для работы в этом состоянии
-local quitSignal = signal.new()
-local quitInput = {}
-local qoitUi = {}
+local Signal = signal.new()
+local Input = {}
+local Ui = {}
+
+local Menu = {}
 
 function st_quitMenu:init ()
-   quitInput = input(
-      {signal = quitSignal,
-      kayConform = {
-         {"return", "quitGame"},
-         {"escape", "returnState"}
-      }}
-   )
+   UI = hud ("content/keyrusMedium.ttf", 22, Signal)
+   UI:addLable({name = "title", pos = vector (100, 10)})
 
-   quitUI = hud ("content/keyrusMedium.ttf", 22, quitSignal)
+   Menu = menu({UI = UI, signal = Signal})
 
-   --надписи на экране
-   quitUI:addLable ({name = "mainTile", pos = vector(100, 10)})
-   quitUI:addLable ({name = "2Tile", pos = vector(100, 130)})
-   quitUI:addLable ({name = "3Tile", pos = vector(100, 150)})
+   Input = Menu.input
 
-   --задать обработку нажатия клавиши
-   quitSignal:register("quitGame",
-      function () love.event.quit() end)
+   -- задать, какие пункты меню отрисовывать и откуда начинать отрисовку
+   local drawPos = vector(100, 100)
+   local paragraphs = {
+      {label = "Вернуться назад", action = function () gamestate.switch(self.previousState) end},
+      {label = "Главное меню", action = function () gamestate.switch(st_startMenu) end},
+      {label = "Выход", action = function () love.event.quit() end}
+   }
 
-   quitSignal:register("returnState",
-      function () gamestate.switch(self.previousState) end)
+   Menu:addParagraphs(paragraphs, drawPos)
 end
 
 function st_quitMenu:enter (previous)
    self.previousState = previous
 
-   --отобразить приглашение к выходу из игры
-   quitSignal:emit(
+   -- просто, вывод сообщения на экран
+   Signal:emit (
       "hud",
-      "mainTile",
-      "Выйти из игры?")
+      "title",
+      "Закончить игру?")
 
-   quitSignal:emit(
-      "hud",
-      "2Tile",
-      "- для выхода нажмите Enter -")
-
-   quitSignal:emit(
-      "hud",
-      "3Tile",
-      "- чтобы вернуться нажмите Esc -")
+   -- первый вызов пунктов меню
+   Menu:update()
 end
 
 function st_quitMenu:keypressed (key, isrepeat)
-   quitInput:handle(key)
+   Input:handle(key)
 end
 
 function st_quitMenu:draw ()
-   quitUI:draw()
+   UI:draw()
 end

@@ -1,7 +1,7 @@
---Это модуль, описывающий игровое состояние с начальным, вступительным меню
---игровое состояние - это глобальный объект (сделано так, чтобы
---упростить манипуляции с состояниями)
+-- пример переписывания модуля с состоянием начального меню
+-- с использованием нового класса меню
 
+local menu     = require "menu"
 local signal   = require "hump.signal"
 local input    = require "input"
 local hud      = require "view.hud"
@@ -9,152 +9,47 @@ local vector   = require "hump.vector"
 
 st_startMenu = {}
 
---для работы в стартовом меню нужны такие объекты
---объект обработки сигналов
-local menuSignal = signal.new ()
+-- части состояния
+local Signal = signal.new ()
+local Input = {}
+local UI = {}
 
---пользовательский ввод
-local menuInput = {}
+local Menu = {}
 
---пользовательский интерфейс
-local menuUI = {}
+function st_startMenu:init()
+    UI = hud ("content/keyrusMedium.ttf", 22, Signal)
+    UI:addLable({name = "title", pos = vector (100, 10)})
 
---собственно - объект меню
-local mainMenu = {}
+    Menu = menu({UI = UI, signal = Signal})
 
---отображение пунктов меню на экране
-function mainMenu:showMenu (sign)
-   for _, v in ipairs(self) do
-      local pref
+    Input = Menu.input
 
-      if v.selected then
-         pref = "--- "
-      else
-         pref = "    "
-      end
+    -- задать, какие пункты меню отрисовывать и откуда начинать отрисовку
+    local drawPos = vector(100, 100)
+    local paragraphs = {
+        {label = "Играть на случайной карте", action = function () gamestate.switch(st_gameMain, {map = MP_RND}) end},
+        {label = "Играть на заданой карте", action = function () gamestate.switch(st_gameMain, {map = MP_MANUAL}) end},
+        {label = "Выход", action = function () gamestate.switch(st_quitMenu) end}
+    }
 
-      sign:emit (
-         "hud",
-         v.name,
-         pref .. v.lable)
-   end
+    Menu:addParagraphs(paragraphs, drawPos)
 end
 
---функция, вызываемая при первом обращении к состоянию меню
-function st_startMenu:init ()
-   --задаем кнопки, нажатия на которые будет обрабатывать input
-   local inputData = {
-      signal = menuSignal,
-      kayConform = {
-         {"up", "upMenu"},
-         {"down", "downMenu"},
-         {"return", "activateMenu"}
-      }
-   }
-
-   menuInput = input (inputData)
-
-   --задаем объект пользовательского интерфейса
-   menuUI = hud ("content/keyrusMedium.ttf", 22, menuSignal)
-
-   --название игры
-   menuUI:addLable({name = "title", pos = vector (100, 10)})
-
-   --пункты меню
-   menuUI:addLable({name = "gameMenuRnd", pos = vector (100, 100)})
-   menuUI:addLable({name = "gameMenuManual", pos = vector (100, 120)})
-   menuUI:addLable({name = "quitMenu", pos = vector (100, 140)})
-
-   --задаем данные для меню
-   --данные в виде - лэйбл - что отображается в этом пункте меню
-   --признак того, что меню выбрано
-   --функция, которая вызывается, когда текущий пункт принимается
-   local gameMenuDataRnd = {
-      name = "gameMenuRnd",
-      lable = "Играть на случайной карте",
-      selected = true,
-      action = function () gamestate.switch(st_gameMain, {map = MP_RND}) end
-   }
-
-   table.insert(mainMenu, gameMenuDataRnd)
-
-   local gameMenuManual = {
-      name = "gameMenuManual",
-      lable = "Играть на заданой карте",
-      selected = false,
-      action = function () gamestate.switch(st_gameMain, {map = MP_MANUAL}) end
-   }
-
-   table.insert(mainMenu, gameMenuManual)
-
-   local quitMenuData = {
-      name = "quitMenu",
-      lable = "Выход",
-      selected = false,
-      action = function () gamestate.switch(st_quitMenu) end
-   }
-
-   table.insert(mainMenu, quitMenuData)
-
-   --регистрация функций перемещения по меню
-   menuSignal:register("upMenu",
-      function ()
-         for i, v in ipairs(mainMenu) do
-            if v.selected and i ~= 1 then
-               v.selected = false
-               mainMenu[i - 1].selected = true
-
-               break
-            end
-         end
-
-         mainMenu:showMenu(menuSignal)
-      end)
-
-   menuSignal:register("downMenu",
-      function ()
-         for i, v in ipairs(mainMenu) do
-            if v.selected and i ~= #mainMenu then
-               v.selected = false
-               mainMenu[i + 1].selected = true
-
-               break
-            end
-         end
-
-         mainMenu:showMenu(menuSignal)
-      end)
-
-   menuSignal:register("activateMenu",
-      function ()
-         for _, v in ipairs(mainMenu) do
-            if v.selected then
-               v.action ()
-
-               break
-            end
-         end
-      end)
-end
-
---функция, вызываемая при каждом заходе в состояние
-function st_startMenu:enter (previous)
-   --просто, вывод сообщения на экран
-   menuSignal:emit (
+function st_startMenu:enter(previous)
+    -- просто, вывод сообщения на экран
+   Signal:emit (
       "hud",
       "title",
       "Maze  - пройди свой лабиринт")
 
-   --первый вызов пунктов меню
-   mainMenu:showMenu (menuSignal)
+   -- первый вызов пунктов меню
+   Menu:update()
 end
 
---обработка нажатия на клавишу
-function st_startMenu:keypressed (key, isrepeat)
-   menuInput:handle(key)
+function st_startMenu:keypressed(key, isrepeat)
+    Input:handle(key)
 end
 
---отрисовка состояния
-function st_startMenu:draw ()
-   menuUI:draw()
+function st_startMenu:draw()
+    UI:draw()
 end

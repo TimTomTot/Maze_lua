@@ -146,6 +146,12 @@ function st_gameMain:enter (previous, extra)
       Viewer:setViewer (GameWorld)
       Hero:setToMap ()
 
+      -- пустое сообщение - для очистки экрана
+      viewSignal:emit(
+         "hud",
+         "message",
+         " ")
+
       viewSignal:emit(
          "hud",
          "message",
