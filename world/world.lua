@@ -4,7 +4,7 @@ local class          = require "hump.class"
 local matrix         = require "utils.matrix"
 local brez           = require "utils.brez"
 local cellfactory    = require "world.cellfactory"
-local itemfactory    = require "world.itemfactory"
+local itemfactory    = require "items.itemsfactory"
 
 local M = class {}
 
@@ -27,7 +27,7 @@ function M:init ()
    self.factory = cellfactory ()
 
    --фабрика для генерации предметов на карте
-   self.items = itemfactory()
+   self.items = itemfactory:new()
 
    --уровень представляет из себя массив типа matrix,
    --в каждой точке которого находится таблица с объектами, наполняющими уровень
@@ -62,7 +62,7 @@ function M:parseMap (str)
          -- если в точке есть не только элементы карты
          if item then
             -- устанавливаем на это место нужный объект
-            local newItem = self.items:newItem(tile)
+            local newItem = self.items:newitem(character)
 
             self.lavel:Get(rowIndex, columnIndex).object = newItem
          end
