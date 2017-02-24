@@ -9,4 +9,10 @@ function Item:init(data)
     self.tile = data.tile or nil
 end
 
+function Item:stand()
+    error(
+        "Abstract method stand() of " .. Item.name .. " class!!"
+    )
+end
+
 return Item

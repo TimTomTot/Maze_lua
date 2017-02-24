@@ -153,6 +153,10 @@ function M:step (di, dj)
       local curCell = self.world.lavel:Get(self.pos.x, self.pos.y)
 
       curCell.stand (self, curCell)
+      
+      if curCell:isObject() then
+         curCell.object:stand(self)
+      end
 
       --расчитать поле зрения
       self.world:solveFOV (self.pos.x,

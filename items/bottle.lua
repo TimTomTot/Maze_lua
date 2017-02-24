@@ -15,4 +15,12 @@ function Bottle:init()
     self.super.init(self, data)
 end
 
+function Bottle:stand(creature)
+    creature.signal:emit(
+        "hud",
+        "message",
+        "Здесь лежит бутылочка"
+    )
+end
+
 return Bottle
