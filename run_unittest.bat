@@ -5,6 +5,6 @@ set TESTS=items\itemsfactory_test.lua items\bottle_test.lua
 cls
 
 for  %%i in (%TESTS%) do (
-    echo _
+    @echo.
     lua testy.lua .\unittests\%%i
 )
