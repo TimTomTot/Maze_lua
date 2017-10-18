@@ -119,7 +119,7 @@ function st_gameMain:init()
    Hero:setToMap ()
 
    --загрузка пользовательского интерфейса
-   ui = hud ("content/keyrusMedium.ttf", 22, viewSignal)
+   ui = hud ("res/content/keyrusMedium.ttf", 22, viewSignal)
 
    --создать лейбл для отображения fps
    ui:addLable ({name = "fps", pos = vector (10, 10)})

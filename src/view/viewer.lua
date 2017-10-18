@@ -38,7 +38,7 @@ function M:init (signal)
    self.drawPos = vector (0, 0)
 
    --отображение карты
-   local mapData = {"content/fantasy-tileset_b.png",
+   local mapData = {"res/content/fantasy-tileset_b.png",
       {{".", 4, 3},
       {"#", 2, 2},
       {">", 5, 1},
@@ -47,17 +47,17 @@ function M:init (signal)
    }
 
    --отображение объектов на карте
-   local objectData = {"content/fantasy-tileset.png",
+   local objectData = {"res/content/fantasy-tileset.png",
       {{"|", 0, 5}} -- лестница
    }
 
    --отображение игрока
-   local playerData = {"content/fantasy-tileset.png",
+   local playerData = {"res/content/fantasy-tileset.png",
       {{"@", 0, 18}}
    }
 
    --отображение затененных тайлов
-   local shadowsData = {"content/fantasy-tileset_bg.png",
+   local shadowsData = {"res/content/fantasy-tileset_bg.png",
       {{".", 4, 3},
       {"#", 2, 2},
       {">", 5, 1},
@@ -66,7 +66,7 @@ function M:init (signal)
    }
 
    --отображение затененых предметов
-   local shadowsItem = {"content/fantasy-tileset_bg.png",
+   local shadowsItem = {"res/content/fantasy-tileset_bg.png",
       {{"|", 0, 5}}
    }
 

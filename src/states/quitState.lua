@@ -16,7 +16,7 @@ local Ui = {}
 local Menu = {}
 
 function st_quitMenu:init ()
-   UI = hud ("content/keyrusMedium.ttf", 22, Signal)
+   UI = hud ("res/content/keyrusMedium.ttf", 22, Signal)
    UI:addLable({name = "title", pos = vector (100, 10)})
 
    Menu = menu({UI = UI, signal = Signal})
