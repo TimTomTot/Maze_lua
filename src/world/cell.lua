@@ -1,24 +1,38 @@
 -- Модуль с ячейкой карты
 
-local class = require "hump.class"
+--[[
+    Этот модуль нуждается в переработке
+    Атрибуты для ячеек будут создаваться во впемя генерации в класса cellfactory
+    
+    Отдельная ячейка имеет такие атрибуты:
+    - название
+    - тайл
+    - существо
+    - предмет
+    - проходима
+    - прозрачна
+    - разведана
+    - затенена    
+--]]
 
-local M = class {}
+local class = require "30log"
 
---генерация новой ячейки на основе данных о протоячейки
-function M:init (data, extra)
-   --имя
-   --тайл
-   --данные о объекте на ячейке
-   --данные о существе на ячейке
-   --флаги ячейки
-   --функция выполняемая при наступании на ячейку
-   --функция выполняемая при применении действия над ячейкой
 
+local Cell = class("Cell")
+
+
+function Cell:init(data)
    self.name = data.name
    self.tile = data.tile
+   
    self.object = {}
    self.creature = {}
 
+   self.iswalkable = data.iswalkable
+   self.istransparent = data.istransparent
+   self.isexplored = data.isexplored
+   self.iadarcked = data.isdarcked
+   
    --добавление уникальных данных для каждой ячейки
    if next (data.flag) then
       self.flag = {}
@@ -47,8 +61,7 @@ function M:init (data, extra)
    end
 end
 
---проверка, есть ли в ячейке существо
-function M:isCreature ()
+function Cell:isCreature ()
    if next (self.creature) then
       return true
    else
@@ -56,8 +69,7 @@ function M:isCreature ()
    end
 end
 
---проверка, есть ли предмет
-function M:isObject()
+function Cell:isObject()
    if next(self.object) then
       return true
    else
@@ -65,4 +77,4 @@ function M:isObject()
    end
 end
 
-return M
+return Cell
