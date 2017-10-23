@@ -9,7 +9,9 @@ local tWall = {}
 
 function SetUp()
     local initdata = {
-        ID = 1
+        ID = 1,
+        x = 10,
+        y = 20
     }
     
     tWall = Wall:new(initdata)
@@ -40,7 +42,23 @@ local function test_InitPropertyCheck()
     assert(is_true(tWall:isShaded()))
     assert(is_false(tWall:isCreature()))
     assert(is_false(tWall:isObject()))
+    assert(is_false(tWall:canCreature()))
+    assert(is_false(tWall:canObject()))
     
+    TearDown()
+end
+
+local function test_CheckPosition()
+    SetUp()
+    
+    assert(is(tWall:getX(), 10))
+    assert(is(tWall:getY(), 20))
+    
+    local tX, tY = tWall:getPosition()
+    
+    assert(is(tX, 10))
+    assert(is(tY, 20))
+        
     TearDown()
 end
 
@@ -122,3 +140,53 @@ local function test_CheckCreatureFail()
     
     TearDown()
 end
+
+local function test_CheckObject()
+    SetUp()
+    
+    assert(is_false(tWall:isObject()))
+    
+    local tObject = "Object"
+    tWall:setObject(tObject)
+    
+    assert(is_true(tWall:isObject()))
+    
+    local resObject = tWall:getObject()
+    
+    assert(is(resObject, tObject))
+    assert(is_true(tWall:isObject()))
+    
+    local resgetObject = tWall:removeObject()
+    
+    assert(is(resgetObject, tObject))
+    assert(is_false(tWall:isObject()))
+    
+    TearDown()
+end
+
+local function test_CheckObjectFail()
+    SetUp()
+    
+    assert(is_false(tWall:isObject()))
+    
+    assert(
+        raises(
+            "It is no object on cell " .. tostring(tWall.ID),
+            tWall.getObject,
+            tWall
+        )
+    )
+    
+    assert(
+        raises(
+            "It is no object on cell " .. tostring(tWall.ID),
+            tWall.removeObject,
+            tWall
+        )
+    )
+    
+    TearDown()
+end
+
+
+

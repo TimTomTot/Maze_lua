@@ -1,28 +1,27 @@
--- wall.lua
+-- stairs.lua
 
 
 local BaseCell = require "world.cell_base"
 
 
-local Wall = BaseCell:extend("WallCell")
+local Stairs = BaseCell:extend("StairsCell")
 
-function Wall:init(data)
+function Stairs:init(data)
     self.ID = data.ID
     self.x = data.x
     self.y = data.y
-    self.name = "wall"
-    self.tile = "#"
-    self.walkable = false
-    self.transparent = false
+    self.name = "stairs"
+    self.tile = ">"
+    self.walkable = true
+    self.transparent = true
     self.explored = false
     self.shaded = true
     
     self.creature = {}
     self.object = {}
     
-    self.cancreature = false
+    self.cancreature = true
     self.canobject = false
 end
 
-return Wall
-
+return Stairs

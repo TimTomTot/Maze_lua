@@ -1,17 +1,17 @@
--- wall.lua
+-- closedoor.lua
 
 
 local BaseCell = require "world.cell_base"
 
 
-local Wall = BaseCell:extend("WallCell")
+local CloseDoor = BaseCell:extend("CloseDoorCell")
 
-function Wall:init(data)
+function CloseDoor:init(data)
     self.ID = data.ID
     self.x = data.x
     self.y = data.y
-    self.name = "wall"
-    self.tile = "#"
+    self.name = "closedoor"
+    self.tile = "+"
     self.walkable = false
     self.transparent = false
     self.explored = false
@@ -24,5 +24,5 @@ function Wall:init(data)
     self.canobject = false
 end
 
-return Wall
+return CloseDoor
 
