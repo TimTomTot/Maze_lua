@@ -8,8 +8,8 @@ local Wall = BaseCell:extend("WallCell")
 
 function Wall:init(data)
     self.ID = data.ID
-    self.x = data.x
-    self.y = data.y
+    self.x = data.x or nil
+    self.y = data.y or nil
     self.name = "wall"
     self.tile = "#"
     self.walkable = false

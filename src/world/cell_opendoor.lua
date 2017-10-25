@@ -8,8 +8,8 @@ local OpenDoor = BaseCell:extend("OpenDoorCell")
 
 function OpenDoor:init(data)
     self.ID = data.ID
-    self.x = data.x
-    self.y = data.y
+    self.x = data.x or nil
+    self.y = data.y or nil
     self.name = "opendoor"
     self.tile = "-"
     self.walkable = true

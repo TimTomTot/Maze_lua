@@ -8,8 +8,8 @@ local Floor = BaseCell:extend("FloorCell")
 
 function Floor:init(data)
     self.ID = data.ID
-    self.x = data.x
-    self.y = data.y
+    self.x = data.x or nil
+    self.y = data.y or nil
     self.name = "floor"
     self.tile = "."
     self.walkable = true
