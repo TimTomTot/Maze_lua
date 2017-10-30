@@ -1,6 +1,6 @@
 --еще один вариант модуля world, без лифней сложности
 
-local class          = require "hump.class"
+local class          = require "30log"
 local matrix         = require "utils.matrix"
 local brez           = require "utils.brez"
 local cellfactory    = require "world.cellfactory"
@@ -9,7 +9,7 @@ local itemfactory    = require "items.itemsfactory"
 local M = class {}
 
 --конструктор
-function M:init ()
+function M:init()
    --инициализация карты уровня
    self.lavel = {}
 
@@ -34,13 +34,13 @@ function M:init ()
 end
 
 --функция парсинга карты мира из строкаи
-function M:parseMap (str)
+function M:parseMap(str)
    --получить размеры карты из строки
-   local N = math.floor (#str / #(str:match("[^\n]+")))
-   local M = #(str:match ("[^\n]+"))
-
+   local N = #(str:match ("[^\n]+"))
+   local M = math.floor (#str / #(str:match("[^\n]+")))
+   
    --задать размеры для карты уровня
-   self.lavel = matrix:New (N, M)
+   self.lavel = matrix:new(N, M)
 
    --пройтись по всей входной строке и
    --исходя из того, какие точки в ней находятся,
@@ -54,17 +54,18 @@ function M:parseMap (str)
          --создать ячейку
          local tile, item = self.factory:newCell (character, {darkened = true})
 
-         self.lavel:Set (
-            rowIndex,
+         self.lavel:set (
             columnIndex,
-            tile)
+            rowIndex,
+            tile
+         )
 
          -- если в точке есть не только элементы карты
          if item then
             -- устанавливаем на это место нужный объект
             local newItem = self.items:newitem(character)
 
-            self.lavel:Get(rowIndex, columnIndex).object = newItem
+            self.lavel:get(columnIndex, rowIndex).object = newItem
          end
 
          columnIndex = columnIndex + 1
@@ -76,10 +77,10 @@ end
 --добавление карты уровня
 function M:addMap (inputMap)
    --подгоняем размер уровня под размер переданой карты
-   self.lavel = matrix:New (inputMap.N, inputMap.M)
+   self.lavel = matrix:new (inputMap.N, inputMap.M)
 
    --переносим данные
-   for i, j, _ in self.lavel:Iterate () do
+   for i, j, _ in self.lavel:iterate () do
       --структура данных для каждой ячейки
       local cellData = {
          --слой с картой
@@ -100,7 +101,7 @@ function M:addMap (inputMap)
          --в начале все точки считаются не посещенными
          visited = false
       }
-      self.lavel:Set (i, j, cellData)
+      self.lavel:set (i, j, cellData)
    end
 end
 
@@ -111,7 +112,7 @@ function M:isEmpty (i, j)
 
    --если она непроходима или в ней существо
    --то счиаем ее занятой
-   local curCell = self.lavel:Get (i, j)
+   local curCell = self.lavel:get (i, j)
 
    if curCell.flag[LV_SOLID] or curCell:isCreature () then
       rez = false
@@ -123,7 +124,7 @@ end
 
 --добавление существа на карту
 function M:addCreature (cre, i, j)
-   self.lavel:Get(i, j).creature = {
+   self.lavel:get(i, j).creature = {
       id = cre.id,
       tile = cre.tile
    }
@@ -131,16 +132,16 @@ end
 
 --сдвиг существа по указаным координатам
 function M:moveCreature (iold, jold, inew, jnew)
-   local creatureData = self.lavel:Get(iold, jold).creature
+   local creatureData = self.lavel:get(iold, jold).creature
 
    --установить данные для новой точки
-   self.lavel:Get(inew, jnew).creature = {
+   self.lavel:get(inew, jnew).creature = {
       id = creatureData.id,
       tile = creatureData.tile
    }
 
    --обнулить старую точку
-   self.lavel:Get(iold, jold).creature = {}
+   self.lavel:get(iold, jold).creature = {}
 end
 
 --новая реализация передачи данных о тайлах
@@ -153,22 +154,22 @@ function M:getCell (i, j)
 
    --карта
    table.insert(data,
-      {self.names[1], self.lavel:Get(i, j).tile})
+      {self.names[1], self.lavel:get(i, j).tile})
 
    --объекты
    table.insert(data,
-      {self.names[2], self.lavel:Get(i, j).object.tile or nil})
+      {self.names[2], self.lavel:get(i, j).object.tile or nil})
 
    --существо
    table.insert(data,
-      {self.names[3], self.lavel:Get(i, j).creature.tile or nil})
+      {self.names[3], self.lavel:get(i, j).creature.tile or nil})
 
    --затенение
-   if self.lavel:Get(i, j).flag[LV_DARKENED] then
+   if self.lavel:get(i, j).flag[LV_DARKENED] then
       --print ("(", i, ";", j, ")", "darkned")
       -- отрисовка элементов карты
       table.insert(data,
-         {self.names[4], self.lavel:Get(i, j).tile})
+         {self.names[4], self.lavel:get(i, j).tile})
    else
       --print ("(", i, ";", j, ")", "undarkned")
       table.insert(data,
@@ -176,16 +177,16 @@ function M:getCell (i, j)
    end
 
    --объекты в затенении
-   if self.lavel:Get(i,j).flag[LV_DARKENED] then
+   if self.lavel:get(i,j).flag[LV_DARKENED] then
       table.insert(data,
-         {self.names[5], self.lavel:Get(i, j).object.tile or nil})
+         {self.names[5], self.lavel:get(i, j).object.tile or nil})
    else
       table.insert(data,
          {self.names[5], nil})
    end
 
    --разведана ячейка или нет
-   if not self.lavel:Get(i, j).flag[LV_EXPLORED] then
+   if not self.lavel:get(i, j).flag[LV_EXPLORED] then
       table.insert(data,
          {self.names[6], nil})
    else
@@ -208,7 +209,7 @@ end
 function M:getMapSize ()
    --print ("N = ", self.lavel.N, " M = ", self.lavel.M)
 
-   return self.lavel.N, self.lavel.M
+   return self.lavel:getWidht(), self.lavel:getHeight()
 end
 
 --расчет поля видимости
@@ -217,8 +218,8 @@ function M:solveFOV (i, j, R)
    self:fillShadow ()
 
    --убрать тень в точке с игроком
-   self.lavel:Get(i, j).flag[LV_DARKENED] = false
-   self.lavel:Get(i, j).flag[LV_EXPLORED] = true
+   self.lavel:get(i, j).flag[LV_DARKENED] = false
+   self.lavel:get(i, j).flag[LV_EXPLORED] = true
 
    ---[[
    --создать список точек, до которых необходимо проложить видимость
@@ -240,19 +241,19 @@ function M:solveFOV (i, j, R)
    --функция, добавляющая точку на карте в разряд видимых
    addVisible.funct = function (x, y)
       if addVisible.empty then
-         self.lavel:Get(x, y).flag[LV_DARKENED] = false
-         self.lavel:Get(x, y).flag[LV_EXPLORED] = true
+         self.lavel:get(x, y).flag[LV_DARKENED] = false
+         self.lavel:get(x, y).flag[LV_EXPLORED] = true
       end
 
       --проверка на выход за границы
-      if self.lavel:IsInside (x, y) then
+      if self.lavel:isInRange(x, y) then
          --[[
          if self.lavel:Get(x, y).name == "closeDoor" then
             print(self.lavel:Get(x, y).flag[LV_OPAQUE])
          end
          --]]
 
-         if self.lavel:Get(x, y).flag[LV_OPAQUE] then
+         if self.lavel:get(x, y).flag[LV_OPAQUE] then
             addVisible.empty = false
          end
       end
@@ -270,7 +271,7 @@ end --solveFOV
 --вспомогательная функция, обновляющая карту видимости
 function M:fillShadow ()
    --просто залить всю карту тенями
-   for i, j, val in self.lavel:Iterate () do
+   for i, j, val in self.lavel:iterate () do
       val.flag[LV_DARKENED] = true
    end
 

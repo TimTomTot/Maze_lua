@@ -11,15 +11,17 @@ require "states.gameplayState"
 gamestate = require "hump.gamestate"
 
 
-function love.load ()
-   gamestate.registerEvents()
-   gamestate.switch(st_startMenu)
+function love.load()
+   	gamestate.registerEvents()
+   	gamestate.switch(st_startMenu)
 end
 
-function love.update (dt)
-   -- body...
+function love.update(dt)
+   	if dt < 1 / 60 then
+   		love.timer.sleep(1 / 60 - dt)
+   	end
 end
 
-function love.draw ()
-   -- body...
+function love.draw()
+   	-- body...
 end
