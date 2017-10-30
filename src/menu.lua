@@ -21,7 +21,7 @@
 --]]
 
 local class    = require "hump.class"
-local input    = require "input"
+local input    = require "inputhandler"
 local hud      = require "view.hud"
 local vector   = require "hump.vector"
 
@@ -45,7 +45,7 @@ function M:init(data)
         }
     }
 
-    self.input = input(inputData)
+    self.input = input:new(inputData)
 
     -- регистрация обработки нажатия на клавиши
     self.signal:register(

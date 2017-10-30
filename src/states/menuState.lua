@@ -3,21 +3,21 @@
 
 local menu     = require "menu"
 local signal   = require "hump.signal"
-local input    = require "input"
+local input    = require "inputhandler"
 local hud      = require "view.hud"
 local vector   = require "hump.vector"
 
 st_startMenu = {}
 
 -- части состояния
-local Signal = signal.new ()
+local Signal = signal.new()
 local Input = {}
 local UI = {}
 
 local Menu = {}
 
 function st_startMenu:init()
-    UI = hud ("res/content/keyrusMedium.ttf", 22, Signal)
+    UI = hud("res/content/keyrusMedium.ttf", 22, Signal)
     UI:addLable({name = "title", pos = vector (100, 10)})
 
     Menu = menu({UI = UI, signal = Signal})
@@ -37,17 +37,22 @@ end
 
 function st_startMenu:enter(previous)
     -- просто, вывод сообщения на экран
-   Signal:emit (
-      "hud",
-      "title",
-      "Maze  - пройди свой лабиринт")
+    Signal:emit(
+        "hud",
+        "title",
+        "Maze  - пройди свой лабиринт"
+    )
 
-   -- первый вызов пунктов меню
-   Menu:update()
+    -- первый вызов пунктов меню
+    Menu:update()
 end
 
 function st_startMenu:keypressed(key, isrepeat)
-    Input:handle(key)
+    
+end
+
+function st_startMenu:update(dt)
+    Input:handle()
 end
 
 function st_startMenu:draw()
