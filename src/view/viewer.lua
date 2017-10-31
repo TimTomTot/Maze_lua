@@ -19,144 +19,80 @@ local matrix   = require "utils.matrix"
 local View = class("View")
 
 --конструктор
-function View:init(signal)
-    --карта, к которой привязано отображение
-    self.world = nil
+function View:init(data)
+    self.tileset = love.graphics.newImage(data.file)
+    
+    if not self.tileset then
+        error("No image file!", 0)
+    end
+    
+    self.tilesetW = self.tileset:getWidth()
+    self.tilesetH = self.tileset:getHeight()    
+    
+    self.size = data.tilesize or 32
+    self.mapW = data.mapW
+    self.mapH = data.mapH
+    
+    self.tiles = {}
+    
+    self:__prepareTileMap__()
+    
+    self.layer = {}
+end 
 
-    --запомнить максимальные размеры карты
-    --(после того, как будет задан новый объект отображения)
-    self.MaxMap = nil
-
-    --обработчик сигналов для отображения
-    self.signal = signal
-
-    --регистрация изменения позиции фрейма (абсолютного)
-    self.signal:register ("setFramePos",
-        function (i, j) self:setFramePos (i, j) end)
-
-    --регистрация изменения позиции фрейма (относительного)
-    self.signal:register ("moveFrame",
-        function (i, j) self:moveFrame (i, j) end)
-
-    --фрейм
-    self.frame = matrix:new (30, 16)
-
-    --позиция фрейма относительно карты
-    self.framePos = vector (0, 0)
-
-    --позиция отображения фрейма на экране
-    self.drawPos = vector (0, 0)
-
-    --отображение карты
-    local mapData = {"res/content/fantasy-tileset_b.png",
-        {{".", 4, 3},
-        {"#", 2, 2},
-        {">", 5, 1},
-        {"+", 6, 2},
-        {"-", 5, 3}}
+function View:addLayer(data)
+    local layer = {
+        name = data.name,
+        map = data.map
     }
-
-    --отображение объектов на карте
-    local objectData = {"res/content/fantasy-tileset.png",
-        {{"|", 0, 5}} -- лестница
-    }
-
-    --отображение игрока
-    local playerData = {"res/content/fantasy-tileset.png",
-        {{"@", 0, 18}}
-    }
-
-    --отображение затененных тайлов
-    local shadowsData = {"res/content/fantasy-tileset_bg.png",
-        {{".", 4, 3},
-        {"#", 2, 2},
-        {">", 5, 1},
-        {"+", 6, 2},
-        {"-", 5, 3}}
-    }
-
-    --отображение затененых предметов
-    local shadowsItem = {"res/content/fantasy-tileset_bg.png",
-        {{"|", 0, 5}}
-    }
-
-    --создать объект с данными для слоев отображения
-    self.frameLayers = {}
-
-    --карта
-    table.insert(self.frameLayers,
-        {name = "map",
-        data = matrix:new (self.frame:getWidht(), self.frame:getHeight()),
-        lay = layer (mapData)})
-
-    ---[[
-    --объекты
-    table.insert(self.frameLayers,
-        {name = "objects",
-        data = matrix:new (self.frame:getWidht(), self.frame:getHeight()),
-        lay = layer (objectData)})
-    --]]
-
-    --существа
-    table.insert(self.frameLayers,
-        {name = "creatures",
-        data = matrix:new (self.frame:getWidht(), self.frame:getHeight()),
-        lay = layer (playerData)})
-
-    --тень
-    table.insert(self.frameLayers,
-        {name = "shadows",
-        data = matrix:new (self.frame:getWidht(), self.frame:getHeight()),
-        lay = layer (shadowsData)})
-
-    --затененые объекты
-    table.insert(self.frameLayers,
-        {name = "shadowsObjects",
-        data = matrix:new(self.frame:getWidht(), self.frame:getHeight()),
-        lay = layer(shadowsItem)}
-    )
-end --init
-
---функция настраивающая отображение на новый игровой уровень
-function View:setViewer(world)
-    --после генерации новой карты объект с ней передается в отображение.
-    self.world = world
-
-    --запомнить максимальные размеры карты
-    self.MaxMap = vector (self.world:getMapSize ())
+    
+    if data.num then
+        self.layer[data.num] = layer
+    else
+        table.insert(self.layer,layer)
+    end
 end
 
 --отображение на экран
 function View:draw ()
-    --размерность отдельного тайла
-    local tw, th = 32, 32
-
-    --отображение идет на основе данных из наборов слоев отображения
-    for _, val in ipairs(self.frameLayers) do
-        --для каждого слоя
-        for i, j, v in val.data:iterate () do
-            --пройтись по всем точкам из данных слоя и на основе того,
-            --какие тайлы там сохранены, отобразить на экране нужные рисунки
-            if v and v ~= "None" then
-                if not val.lay:getQuad(v) then
-                    error(
-                        "Frame = " .. val.name .. "; tile = " .. v .. 
-                        "; i = " .. tostring(i) .. "; j = " .. tostring(j) ..
-                        " Map x position = " .. tostring(i + self.framePos.x) ..
-                        " Map y position = " .. tostring(j + self.framePos.y), 
-                        0
-                    )
-                end
-
-                --print (i, j, v, val.name)
-                love.graphics.draw (val.lay.tileset,
-                    val.lay:getQuad (v),
-                    i * tw - tw + self.drawPos.y,
-                    j * th - th + self.drawPos.x)
-            end
+    for _, val in ipairs(self.layer) do
+        for i, j, v in val.map:iterate() do
+            if v ~= val.map.empty and self.tiles[v] then
+                love.graphics.draw(
+                    self.tileset,
+                    self.tiles[v],
+                    i * self.size - self.size,
+                    j * self.size - self.sizeZ
+                )   
+            end    
         end
-    end
-end --draw
+    end 
+end
+
+function View:__addTile__(name, x, y)
+    self.tiles[name] = love.graphics.newQuad(
+        x * self.size - self.size,
+        y * self.size - self.size,
+        self.size,
+        self.size,
+        self.tilesetW,
+        self.tilesetH
+    )
+end
+
+function View:__prepareTileMap__()
+    self:__addTile__("@", 1, 1)
+
+    self:__addTile__(".", 1, 4)
+    self:__addTile__("-", 2, 4)
+    self:__addTile__("+", 3, 4)
+    self:__addTile__(">", 4, 4)
+    self:__addTile__("#", 5, 4)
+
+    self:__addTile__("|", 1, 3)
+
+    self:__addTile__("*", 1, 10)
+end
 
 --ограничение для фрейма
 function View:checkFrame ()

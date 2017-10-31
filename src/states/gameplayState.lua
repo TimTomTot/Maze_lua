@@ -11,6 +11,7 @@ local vector   = require "hump.vector"
 local input    = require "inputhandler"
 local player   = require "player"
 local hud      = require "view.hud"
+local LayerFactory = require "view.layerfactory"
 
 --подготовка генератора случайных чисел
 math.randomseed(os.time())
@@ -71,9 +72,21 @@ function st_gameMain:init()
     GameWorld:parseMap(self.someMap)
 
     --настоить отбражение
-    Viewer = viewer(viewSignal)
-    Viewer:setViewer(GameWorld)
+    local Width, Height = 30, 16
 
+    local viewinit = {
+        file = "res/content/maintileset.png",
+        mapW = Width,
+        mapH = Height
+    } 
+
+    Viewer = viewer:new(viewinit)
+
+    local Layers = LayerFactory:new({W = Width, H = Height})
+    local maplayer = Layers:generateLayer("map")
+
+    Viewer:addLayer(maplayer)
+    
     --настроить пользовательский ввод
     local inputData = {
         signal = viewSignal,
@@ -151,7 +164,6 @@ function st_gameMain:enter(previous, extra)
         end
 
         GameWorld:parseMap(currentMap)
-        Viewer:setViewer(GameWorld)
         Hero:setToMap()
 
         -- пустое сообщение - для очистки экрана
