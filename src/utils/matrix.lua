@@ -9,12 +9,14 @@ function Matrix:init(x, y)
         error("matrix len is nil!", 0)
     end
 
+    self.empty = "None"
+    
     self.width, self.height = x, y
     self.values = {}
 
     for j = 1, self.height do
         for i = 1, self.width do
-            self.values[(i - 1) * self.width + j] = "None"
+            self.values[(i - 1) * self.width + j] = self.empty
         end
     end
 end
@@ -36,7 +38,7 @@ function Matrix:set(x, y, value)
         error("insert out of range!", 0)
     end
 
-    self.values[(x - 1) * self.width + y] = value or "None"
+    self.values[(x - 1) * self.width + y] = value or self.empty
 end
 
 function Matrix:isInRange(x, y)
@@ -46,6 +48,14 @@ function Matrix:isInRange(x, y)
     else
         return true
     end
+end
+
+function Matrix:isEmpty(x, y)
+    if self:get(x, y) == self.empty then
+        return true
+    end
+    
+    return false
 end
 
 function Matrix:iterate()

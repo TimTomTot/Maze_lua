@@ -7,6 +7,15 @@ local cell     = require "world.cell"
 local matrix   = require "utils.matrix"
 
 
+--[[
+    В конечном итоге, какие должны быть слои и в какой последовательности:
+    - карта
+    - предметы
+    - существа
+    - тень
+--]]
+
+
 local View = class("View")
 
 --конструктор
