@@ -54,6 +54,10 @@ function M:parseMap(str)
          --создать ячейку
          local tile, item = self.factory:newCell (character, {darkened = true})
 
+         if tile == nil then
+            error("tile on " .. tostring(columnIndex) .. " " .. tostring(rowIndex) .. " is nil!!!", 0)
+         end
+         
          self.lavel:set (
             columnIndex,
             rowIndex,

@@ -92,10 +92,10 @@ function st_gameMain:init()
     inputHandler = input:new(inputData)
 
     --связать пользовательский ввод со смещением изображения
-    viewSignal:register("moveRight", function () Hero:step(0, 1) end)
-    viewSignal:register("moveLeft", function () Hero:step(0, -1) end)
-    viewSignal:register("moveDown", function () Hero:step(1, 0) end)
-    viewSignal:register("moveUp", function () Hero:step(-1, 0) end)
+    viewSignal:register("moveRight", function () Hero:step(1, 0) end)
+    viewSignal:register("moveLeft", function () Hero:step(-1, 0) end)
+    viewSignal:register("moveDown", function () Hero:step(0, 1) end)
+    viewSignal:register("moveUp", function () Hero:step(0, -1) end)
 
     viewSignal:register(
         "quitGame",

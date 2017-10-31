@@ -109,7 +109,7 @@ function View:init(signal)
 end --init
 
 --функция настраивающая отображение на новый игровой уровень
-function View:setViewer (world)
+function View:setViewer(world)
     --после генерации новой карты объект с ней передается в отображение.
     self.world = world
 
@@ -128,16 +128,22 @@ function View:draw ()
         for i, j, v in val.data:iterate () do
             --пройтись по всем точкам из данных слоя и на основе того,
             --какие тайлы там сохранены, отобразить на экране нужные рисунки
-            if v and v ~= 0 then
+            if v and v ~= "None" then
                 if not val.lay:getQuad(v) then
-                    error("i = " .. tostring(i) .. " j = " .. tostring(j), 0)
+                    error(
+                        "Frame = " .. val.name .. "; tile = " .. v .. 
+                        "; i = " .. tostring(i) .. "; j = " .. tostring(j) ..
+                        " Map x position = " .. tostring(i + self.framePos.x) ..
+                        " Map y position = " .. tostring(j + self.framePos.y), 
+                        0
+                    )
                 end
 
                 --print (i, j, v, val.name)
                 love.graphics.draw (val.lay.tileset,
                     val.lay:getQuad (v),
-                    j * tw - tw + self.drawPos.y,
-                    i * th - th + self.drawPos.x)
+                    i * tw - tw + self.drawPos.y,
+                    j * th - th + self.drawPos.x)
             end
         end
     end
@@ -199,7 +205,7 @@ function View:updateViewer ()
         --print(curCell["visited"].tile)
 
         --print (unpack (curCell))
-        if not curCell then
+        if not next(curCell) then
             error ("curCell = nil")
         end
 
