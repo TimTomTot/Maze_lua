@@ -21,7 +21,7 @@ math.randomseed(os.time())
 st_gameMain = {}
 
 --мир игры
-local GameWorld = world()
+local GameWorld = {}
 
 --объект отображения
 local Viewer = {}
@@ -68,12 +68,13 @@ function st_gameMain:init()
 #..........................|...........#
 ########################################
 ]]
-
-    GameWorld:parseMap(self.someMap)
-
     --настоить отбражение
     local Width, Height = 30, 16
 
+    GameWorld = world:new({W = Width, H = Height})
+    
+    GameWorld:parseMap(self.someMap)
+    
     local viewinit = {
         file = "res/content/maintileset.png",
         mapW = Width,
@@ -83,9 +84,16 @@ function st_gameMain:init()
     Viewer = viewer:new(viewinit)
 
     local Layers = LayerFactory:new({W = Width, H = Height})
+    
     local maplayer = Layers:generateLayer("map")
+    local itemlayer = Layers:generateLayer("items")
+    local creaturelayer = Layers:generateLayer("creatures")
+    local shadowlayer = Layers:generateLayer("shadow")
 
-    Viewer:addLayer(maplayer)
+    Viewer:addLayer(maplayer:getLayer())
+    Viewer:addLayer(itemlayer:getLayer())
+    Viewer:addLayer(creaturelayer:getLayer())
+    Viewer:addLayer(shadowlayer:getLayer())
     
     --настроить пользовательский ввод
     local inputData = {
@@ -126,6 +134,28 @@ function st_gameMain:init()
         end
     )
     --]]
+    
+    -- обновление изображения 
+    viewSignal:register(
+        "updateWorld",
+        function ()
+            -- связь слоя отображения с картой
+            local mainlayers = GameWorld:getFrameView()
+            
+            maplayer:updateLayer(mainlayers)
+            itemlayer:updateLayer(mainlayers)
+            creaturelayer:updateLayer(mainlayers)
+            
+            shadowlayer:updateLayer(GameWorld:getShadowView())
+        end
+    )
+    
+    viewSignal:register(
+        "setFramePos",
+        function (x, y)
+            GameWorld:setFramePos(x, y)
+        end
+    )
 
     --создать игрока
     Hero = player(

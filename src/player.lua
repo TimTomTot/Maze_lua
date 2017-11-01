@@ -67,7 +67,8 @@ function M:init(data)
                     )
 
                     self.signal:emit("setFramePos", self.pos.x, self.pos.y)
-
+                    self.signal:emit("updateWorld")
+                    
                     break
                 end
             end
@@ -109,7 +110,8 @@ function M:init(data)
                     )
 
                     self.signal:emit("setFramePos", self.pos.x, self.pos.y)
-
+                    self.signal:emit("updateWorld")
+                    
                     break
                 end
             end
@@ -119,7 +121,7 @@ function M:init(data)
                     "hud",
                     "message",
                     "Вокруг нет дверей, которые можно закрыть!"
-                )
+                )                
             end
         end
     )
@@ -159,6 +161,8 @@ function M:setToMap()
             break
         end
     end
+    
+    self.signal:emit("updateWorld")
 end
 
 --перемещение игрока (отностельно текущей позиции)
@@ -193,6 +197,7 @@ function M:step(di, dj)
 
         --и оповестить об этом объект отображения
         self.signal:emit("setFramePos", self.pos.x, self.pos.y)
+        self.signal:emit("updateWorld")
     else
         --сообщение о том, что дальше продвинуться невозможно
         self.signal:emit("hud", "message", "Здесь не пройти!")

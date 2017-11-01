@@ -62,7 +62,7 @@ function Factory:generateLayer(name)
     
     local newlayer = Layer:new(initdata)
     
-    return newlayer:getLayer()
+    return newlayer
 end
 
 return Factory

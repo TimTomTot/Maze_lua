@@ -1,8 +1,8 @@
 -- Модуль с ячейкой карты
 
-local class = require "hump.class"
+local class = require "30log"
 
-local M = class {}
+local M = class("Cell")
 
 --генерация новой ячейки на основе данных о протоячейки
 function M:init (data, extra)
