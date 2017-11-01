@@ -1,151 +1,135 @@
--- Модуль, предоставляющий унифицированный класс для отображения всех видов меню
+-- menu.lua
+
 --[[
-
-Для работы ему нужно передать объект UI, уже созданый.
-
-Модуль сам создает объект обработчика пользовательского ввода и управляет им
-
-Как пользоваться:
-1. Создать объект UI
-2. Создать объект сигнала
-3. Инициализировать этими объектами меню
-4. Инициализировать пункты меню, передав в объект, откуда они будут отображаться (в виде вектора) и такую структуру:
-    {
-        {label = "Пункт 1", action = function() ...... end},
-        {label = "Пункт 2", action = function() ...... end}
-    }
-5. забрать из объекта обработчик нажатий на кнопки menu.input и использовать его как штатный обработчик входа.
-6. при использовании меню в отдельном игровом состоянии, нужно обеспечить, чобы при входе в состояние
-   вызывалась функция обновления меню  menu:update()
-
+    Простой модуль меню
+    
+    Для работы в него нужно последовательно передать пункты меню с названием (text),
+    действием, которое будет вызываться при выборе этого пункта - selectAction
+    и действием при активации пункта enterAction
+    
+    действия задаются в виде функций - колбеков
 --]]
 
-local class    = require "hump.class"
-local input    = require "inputhandler"
-local hud      = require "view.hud"
-local vector   = require "hump.vector"
 
-local M = class {}
+local class = require "30log"
+local suit = require "SUIT"
 
--- для инициализации нужно передать на вход объекты UI и обработчика сигналов
-function M:init(data)
-    self.interfase = data.UI
-    self.signal = data.signal
 
-    -- пункты меню
+local Menu = class("Menu")
+
+function Menu:init(data)
+    self.posx = data.x
+    self.posy = data.y
+    self.font = love.graphics.newFont (data.font, data.pt)
+    self.color = data.color or {bg = {225, 0, 0}}
+    
+    self.width = data.w or 600
+    self.height = data.h or 16
+    
+    self.selectPrefix = data.selectPrefix     or "--- "
+    self.unselectPrefix = data.unselectPrefix or "    " 
+
+    self.suit = suit.new()
+    
     self.menu = {}
-
-    -- создание и настройка обработчика пользовательского ввода
-    local inputData = {
-        signal = self.signal,
-        kayConform = {
-            {"up", "upMenu"},
-            {"down", "downMenu"},
-            {"return", "activateMenu"}
-        }
-    }
-
-    self.input = input:new(inputData)
-
-    -- регистрация обработки нажатия на клавиши
-    self.signal:register(
-        "upMenu",
-        function()
-            for i, v in ipairs(self.menu) do
-                if v.selected and i ~= 1 then
-                    v.selected = false
-                    self.menu[i - 1].selected = true
-                    break
-                end
-            end
-
-            self:update()
-        end
-    )
-
-    self.signal:register(
-        "downMenu",
-        function()
-            for i, v in ipairs(self.menu) do
-                if v.selected and i ~= #self.menu then
-                    v.selected = false
-                    self.menu[i + 1].selected = true
-                    break
-                end
-            end
-
-            self:update()
-        end
-    )
-
-    self.signal:register(
-        "activateMenu",
-        function()
-            for _, v in ipairs(self.menu) do
-                if v.selected then
-                    v.action()
-                    break
-                end
-            end
-        end
-    )
 end
 
--- функция добавления пунктов меню
--- все пункты описывваются как элементы таблицы в виде:
--- что должно быть написано в этом пункте
--- что происходит при выборе этого пункта (функция)
--- одновременно с созданием пунктов меню происходит их привязка к лейблам отображения на экране
-function M:addParagraphs(data, firstPosition)
-    -- сохраним позицию отображения для конкретного лейбла
-    local curPos = vector(firstPosition.x, firstPosition.y)
-
-    for _, val in ipairs(data) do
-        local paragraphData = {
-            name = #self.menu,
-            label = val.label,
-            action = val.action,
-        }
-
-        --только первая запись заносится как выбранная
-        if #self.menu == 0 then
-            paragraphData.selected = true
-        else
-            paragraphData.selected = false
-        end
-
-        table.insert(self.menu, paragraphData)
-
-        -- привязка к лейблу
-        self.interfase:addLable({name = paragraphData.name, pos = curPos})
-
-        --curPos.y = curPos.y + 20
-        curPos = curPos + vector(0, 20)
-
-        -- print(tostring(curPos.y))
+function Menu:addItem(item)
+	  table.insert(self.menu, item)
+	 
+    if #self.menu == 1 then
+        self.menu[#self.menu].selected = true
+        
+        self:__selectAction__(#self.menu)
+    else
+        self.menu[#self.menu].selected = false
     end
 end
 
--- функция обновления меню
--- просто меняет положения маркера выбранного пункта в соответствии с тем, какой сейчас активен
-function M:update()
-    -- print (self.menu)
-
-    for _, v in ipairs(self.menu) do
-        local pref
-
-        if v.selected then
-            pref = "--- "
-        else
-            pref = "    "
+function Menu:update()
+    self.suit.layout:reset(self.posx, self.posy - self.height)   
+    
+    -- пустой лейбл для удобства 
+    self.suit:Label(
+        " ", 
+        {align = "left", font = self.font}, 
+        self.suit.layout:row(self.width, self.height)
+    )
+    
+    local prefix
+    
+    for _, val in ipairs(self.menu) do
+        if val.selected then
+            prefix = self.selectPrefix
+        else 
+            prefix = self.unselectPrefix
         end
-
-        self.signal:emit(
-            "hud",
-            v.name,
-            pref .. v.label
-        )
+        
+        self.suit:Label(
+            prefix .. val.text,
+            {align = "left", font = self.font, color = self.color},
+            self.suit.layout:row() 
+        )    
     end
 end
 
-return M
+function Menu:up()
+    for i, val in ipairs(self.menu) do
+        if val.selected and i > 1 then
+            self.menu[i - 1].selected = true
+            self.menu[i].selected = false
+            
+            self:__selectAction__(i - 1)
+            
+            break
+        end
+    end
+end
+
+function Menu:down()
+    for i, val in ipairs(self.menu) do
+        if val.selected and i < #self.menu then
+            self.menu[i + 1].selected = true
+            self.menu[i].selected = false
+            
+            self:__selectAction__(i + 1)
+            
+            break
+        end
+    end
+end
+
+function Menu:enter(...)
+    for i, val in ipairs(self.menu) do
+        if val.selected then
+            self:__enterAction__(i, arg)    
+        end
+    end
+end
+
+function Menu:setSelect(position)
+    for _, val in ipairs(self.menu) do
+        val.selected = false
+    end	
+    
+    self.menu[position].selected = true
+    self:__selectAction__(position)
+end
+
+function Menu:draw()
+    self.suit:draw()	
+end
+
+function Menu:__selectAction__(parag)
+    if self.menu[parag].selectAction then
+        self.menu[parag].selectAction()
+    end
+end
+
+function Menu:__enterAction__(parag, ...)
+    if self.menu[parag].enterAction then
+        self.menu[parag].enterAction(arg)
+    end
+end
+
+return Menu

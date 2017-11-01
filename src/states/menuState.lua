@@ -20,19 +20,50 @@ function st_startMenu:init()
     UI = hud("res/content/keyrusMedium.ttf", 22, Signal)
     UI:addLable({name = "title", pos = vector (100, 10)})
 
-    Menu = menu({UI = UI, signal = Signal})
+    Menu = menu:new({
+        x = 100, 
+        y = 100,
+        font = "res/content/keyrusMedium.ttf", 
+        pt = 22
+    })
+    
+    Menu:addItem({
+        text = "Играть на случайной карте",
+        enterAction = function ()
+            gamestate.switch(st_gameMain, {map = MP_RND})
+        end
+    })
+    
+    Menu:addItem({
+        text = "Играть на заданой карте",
+        enterAction = function ()
+            gamestate.switch(st_gameMain, {map = MP_MANUAL})
+        end
+    })
+    
+    Menu:addItem({
+        text = "Выход",
+        enterAction = function ()
+            gamestate.switch(st_quitMenu)
+        end
+    })
+    
+    Menu:setSelect(1)
 
-    Input = Menu.input
-
-    -- задать, какие пункты меню отрисовывать и откуда начинать отрисовку
-    local drawPos = vector(100, 100)
-    local paragraphs = {
-        {label = "Играть на случайной карте", action = function () gamestate.switch(st_gameMain, {map = MP_RND}) end},
-        {label = "Играть на заданой карте", action = function () gamestate.switch(st_gameMain, {map = MP_MANUAL}) end},
-        {label = "Выход", action = function () gamestate.switch(st_quitMenu) end}
+    local inputhandlerinitdata = {
+        signal = Signal,
+        kayConform = {
+            {"up", "menuUp"},
+            {"down", "menuDown"},
+            {"return", "menuActivate"}            
+        } 
     }
-
-    Menu:addParagraphs(paragraphs, drawPos)
+        
+    Input = input:new(inputhandlerinitdata)
+    
+    Signal:register("menuUp", function () Menu:up() end)
+    Signal:register("menuDown", function () Menu:down() end)
+    Signal:register("menuActivate", function () Menu:enter() end)
 end
 
 function st_startMenu:enter(previous)
@@ -53,8 +84,10 @@ end
 
 function st_startMenu:update(dt)
     Input:handle()
+    Menu:update()
 end
 
 function st_startMenu:draw()
     UI:draw()
+    Menu:draw()
 end
