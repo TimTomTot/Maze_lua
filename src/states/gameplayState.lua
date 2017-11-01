@@ -129,7 +129,7 @@ function st_gameMain:init()
         "generateMap",
         function ()
             GameWorld:parseMap(self.someMap)
-            Viewer:setViewer(GameWorld)
+            -- Viewer:setViewer(GameWorld)
             Hero:setToMap()
         end
     )
@@ -144,7 +144,8 @@ function st_gameMain:init()
             
             maplayer:updateLayer(mainlayers)
             itemlayer:updateLayer(mainlayers)
-            creaturelayer:updateLayer(mainlayers)
+            
+            creaturelayer:updateLayer(GameWorld:getCreatureViev())
             
             shadowlayer:updateLayer(GameWorld:getShadowView())
         end

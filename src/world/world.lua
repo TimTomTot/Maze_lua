@@ -26,6 +26,7 @@ function M:init(data)
     
     self.frame = matrix:new(self.frameWidth, self.frameHeight)
     self.shadowframe = matrix:new(self.frameWidth, self.frameHeight)
+    self.creatureframe = matrix:new(self.frameWidth, self.frameHeight)
     
     self.framePos = vector(0, 0)
 end
@@ -263,16 +264,29 @@ function M:getFrameView()
             if curtile:isObject() then
                 self.frame:set(i, j, curtile.object.tile)
             end
-            
-            if curtile:isCreature() then
-                self.frame:set(i, j, curtile.creature.tile)
-            end
         else
             self.frame:set(i, j, self.frame.empty)
         end
     end
     
     return self.frame
+end
+
+function M:getCreatureViev()
+    for i, j, val in self.creatureframe:iterate() do
+        local curtile = self.lavel:get(
+            i + self.framePos.x,
+            j + self.framePos.y
+        )           
+        
+        if curtile.flag[LV_EXPLORED] and curtile:isCreature() then
+            self.creatureframe:set(i, j, curtile.creature.tile)
+        else
+            self.creatureframe:set(i, j, self.shadowframe.empty)
+        end
+    end
+    
+    return self.creatureframe
 end
 
 function M:getShadowView()
