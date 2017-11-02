@@ -7,6 +7,7 @@ require "const"
 require "states.menuState"
 require "states.quitState"
 require "states.gameplayState"
+require "states.stubstate"
 
 gamestate = require "hump.gamestate"
 

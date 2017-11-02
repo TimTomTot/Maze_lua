@@ -30,7 +30,8 @@ function st_startMenu:init()
     Menu:addItem({
         text = "Играть на случайной карте",
         enterAction = function ()
-            gamestate.switch(st_gameMain, {map = MP_RND})
+            -- gamestate.switch(st_gameMain, {map = MP_RND})
+            gamestate.switch(st_stub)
         end
     })
     

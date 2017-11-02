@@ -11,7 +11,7 @@ st_quitMenu = {}
 --модули, необходимые для работы в этом состоянии
 local Signal = signal.new()
 local Input = {}
-local Ui = {}
+local UI = {}
 
 local Menu = {}
 
