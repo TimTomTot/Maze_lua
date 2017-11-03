@@ -37,7 +37,22 @@ function M:addCells()
     local floorData = {
         name = "floor",
         tile = ".",
-        flag = {}
+        flag = {},
+        action = function (creature, action, thisCell)
+            if action == AC_PICKUP then
+                if thisCell:isObject() then
+                    creature.signal:emit(
+                        "hud",
+                        "message",
+                        thisCell:getObject().catchUpMessage
+                    )
+
+                    local obj = thisCell:removeObject()
+
+                    creature:addToInventory(obj)
+                end
+            end
+        end
     }
     --floorData.flag[LV_TRANSPARENT] = true
 

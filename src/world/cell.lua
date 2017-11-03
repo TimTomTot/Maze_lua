@@ -65,4 +65,16 @@ function M:isObject()
    end
 end
 
+function M:getObject()
+   return self.object
+end
+
+function M:removeObject()
+   local obj = self.object
+
+   self.object = {}
+
+   return obj
+end
+
 return M

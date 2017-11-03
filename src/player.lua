@@ -1,11 +1,11 @@
 --Игрок
 
-local class    = require "hump.class"
+local class    = require "30log"
 local vector   = require "hump.vector"
 local neig     = require "utils.neighborhood"
---local matrix   = require "utils.matrix"
+local Inventory = require "inventory"
 
-local M = class {}
+local M = class("Player")
 
 --конструктор
 function M:init(data)
@@ -13,6 +13,8 @@ function M:init(data)
     self.tile = data.tile
     self.world = data.world
     self.signal = data.signalView
+
+    self.inventory = Inventory:new()
 
     --радиус обзора
     self.fovR = data.R
@@ -36,6 +38,23 @@ function M:init(data)
         end
     )
     --]]
+
+    -- действие поднятия предмета с пола
+    self.signal:register(
+        "catchUp",
+        function ()
+            local curcell = self.world.lavel:get(self.pos.x, self.pos.y)
+            local rez = self.world.lavel:get(self.pos.x, self.pos.y).action(self, AC_PICKUP, curcell)
+
+            if not rez then
+                self.signal:emit(
+                    "hud",
+                    "message",
+                    "Здесь нечего поднимать!"
+                )
+            end
+        end
+    )
 
     --регистрация действия с открытием двери
     self.signal:register(
@@ -202,6 +221,14 @@ function M:step(di, dj)
         --сообщение о том, что дальше продвинуться невозможно
         self.signal:emit("hud", "message", "Здесь не пройти!")
     end
+end
+
+function M:addToInventory(obj)
+    self.inventory:addItem()
+end
+
+function M:getInventory()
+    return self.inventory
 end
 
 return M

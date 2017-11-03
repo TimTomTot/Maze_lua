@@ -7,12 +7,9 @@ local Item = require "items.item"
 local Bottle = Item:extend("Bottle")
 
 function Bottle:init()
-    local data = {
-        name = "bottle",
-        tile = "|"
-    }
-    
-    self.super.init(self, data)
+    self.name = "bottle"
+    self.tile = "|"
+    self.catchUpMessage = "Ты подбираешь бутылочку"
 end
 
 function Bottle:stand(creature)
