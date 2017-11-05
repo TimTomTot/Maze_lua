@@ -8,6 +8,7 @@ require "states.menuState"
 require "states.quitState"
 require "states.gameplayState"
 require "states.stubstate"
+require "states.inventorystate"
 
 gamestate = require "hump.gamestate"
 

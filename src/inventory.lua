@@ -14,8 +14,12 @@ function Inventory:addItem(inputitem)
 	table.insert(self.itemlist, inputitem)
 end
 
-function Inventory:removeItem(number)
-	return table.remove(self.itemlist, number)
+function Inventory:removeItem(idnumber)
+	for i, val in ipairs(self.itemlist) do
+		if idnumber == val.ID then
+			return table.remove(self.itemlist, i)
+		end
+	end
 end
 
 function Inventory:getLen()

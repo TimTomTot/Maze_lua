@@ -54,10 +54,10 @@ function st_gameMain:init()
 #........#......#.....#.......#........#
 #........#......#.....#.......+........#
 #........#......#.....#.......#..|||...#
-#........#......+.....#.......#........#
-#........#......#.....#.......#........#
-#..|.....#......#.....#.......#........#
-#........#......#.....#.......#........#
+#........#......+.....#.......#..|||...#
+#........#......#.....#.......#..|||...#
+#..|.....#......#.....#.......#..|||...#
+#........#......#.....#.......#..|||...#
 #........+..|...#.....+.......#........#
 #........#......#.....#.......#........#
 #........#......#.....#.......#........#
@@ -107,6 +107,7 @@ function st_gameMain:init()
             {"o", "openDoor"},
             {"c", "closeDoor"},
             {"g", "catchUp"},
+            {"i", "openInventory"},
             {"escape", "quitGame"}
         }
     }
@@ -118,6 +119,11 @@ function st_gameMain:init()
     viewSignal:register("moveLeft", function () Hero:step(-1, 0) end)
     viewSignal:register("moveDown", function () Hero:step(0, 1) end)
     viewSignal:register("moveUp", function () Hero:step(0, -1) end)
+
+    viewSignal:register(
+        "openInventory",
+        function () gamestate.switch(st_inventoryState, Hero) end
+    )
 
     viewSignal:register(
         "quitGame",

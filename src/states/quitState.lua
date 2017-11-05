@@ -66,7 +66,7 @@ function st_quitMenu:init()
 end
 
 function st_quitMenu:enter(previous)
-    self.previousState = previous
+    self.previousState = previous    
 
     -- просто, вывод сообщения на экран
     Signal:emit(

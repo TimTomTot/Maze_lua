@@ -35,7 +35,7 @@ function Menu:init(data)
 end
 
 function Menu:addItem(item)
-	  table.insert(self.menu, item)
+	table.insert(self.menu, item)
 	 
     if #self.menu == 1 then
         self.menu[#self.menu].selected = true
@@ -43,6 +43,12 @@ function Menu:addItem(item)
         self:__selectAction__(#self.menu)
     else
         self.menu[#self.menu].selected = false
+    end
+end
+
+function Menu:removeAll()
+    while #self.menu > 0 do
+        table.remove(self.menu)
     end
 end
 
@@ -99,10 +105,10 @@ function Menu:down()
     end
 end
 
-function Menu:enter(...)
+function Menu:enter(data)
     for i, val in ipairs(self.menu) do
         if val.selected then
-            self:__enterAction__(i, arg)    
+            self:__enterAction__(i, data)    
         end
     end
 end
@@ -126,9 +132,9 @@ function Menu:__selectAction__(parag)
     end
 end
 
-function Menu:__enterAction__(parag, ...)
+function Menu:__enterAction__(parag, extra)
     if self.menu[parag].enterAction then
-        self.menu[parag].enterAction(arg)
+        self.menu[parag].enterAction(extra)
     end
 end
 

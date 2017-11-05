@@ -15,6 +15,7 @@ function M:init(data)
     self.signal = data.signalView
 
     self.inventory = Inventory:new()
+    self.maxinventory = data.maxinventory or 12
 
     --радиус обзора
     self.fovR = data.R
@@ -224,7 +225,11 @@ function M:step(di, dj)
 end
 
 function M:addToInventory(obj)
-    self.inventory:addItem()
+    if self.inventory:getLen() + 1 < self.maxinventory then
+        self.inventory:addItem(obj)
+    else
+        self.signal:emit("hud", "message", "В инвентаре больше нет места!")
+    end
 end
 
 function M:getInventory()
