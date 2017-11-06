@@ -217,6 +217,8 @@ function st_gameMain:enter(previous, extra)
             message
         )
     end
+
+    viewSignal:emit("updateWorld")
 end
 
 --обработка нажатия кнопок

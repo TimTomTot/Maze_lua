@@ -41,15 +41,19 @@ function M:addCells()
         action = function (creature, action, thisCell)
             if action == AC_PICKUP then
                 if thisCell:isObject() then
-                    creature.signal:emit(
-                        "hud",
-                        "message",
-                        thisCell:getObject().catchUpMessage
-                    )
+                    local can = creature:canCatchUp()
 
-                    local obj = thisCell:removeObject()
+                    if can then
+                        creature.signal:emit(
+                            "hud",
+                            "message",
+                            thisCell:getObject().catchUpMessage
+                        )
 
-                    creature:addToInventory(obj)
+                        local obj = thisCell:removeObject()
+
+                        creature:addToInventory(obj)
+                    end
                 end
             end
         end

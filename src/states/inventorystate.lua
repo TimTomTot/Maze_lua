@@ -51,7 +51,7 @@ function st_inventoryState:init()
 end
 
 function st_inventoryState:enter(previous, player)
-	assert(player.tile == "@", " Player = " .. tostring(player))
+	-- assert(player.tile == "@", " Player = " .. tostring(player))
 
 	self.previousState = previous
 	self.inventoryholder = player
@@ -66,6 +66,12 @@ function st_inventoryState:enter(previous, player)
         "hud",
         "statedescription",
         "ESC - выйти, enter - использовать предмет, backspase - выбросить предмет"
+    )
+
+    self.signal:emit(
+        "hud",
+        "inventorymessage",
+        " "
     )
 
     self.inventory = self.inventoryholder:getInventory()
@@ -108,14 +114,23 @@ function st_inventoryState:__updateMenu__()
     					)
     				elseif actiontype == "drop" then
     					-- дать команду на выбрасывание предмета на карту
+    					local res = self.inventoryholder:dropItem(item.ID)
 
-    					self.inventory:removeItem(item.ID)
+    					if res then
+    						self.inventory:removeItem(item.ID)
 
-	        			self.signal:emit(
-        					"hud",
-        					"inventorymessage",
-        					item.dropdescription
-    					)
+	        				self.signal:emit(
+        						"hud",
+        						"inventorymessage",
+        						item.dropdescription
+    						)
+    					else
+    						self.signal:emit(
+        						"hud",
+        						"inventorymessage",
+        						"Некуда выбросить предмет!"
+    						)
+	        			end
 	        		end
 
 	            	self:__updateMenu__()

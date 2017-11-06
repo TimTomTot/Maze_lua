@@ -225,10 +225,40 @@ function M:step(di, dj)
 end
 
 function M:addToInventory(obj)
-    if self.inventory:getLen() + 1 < self.maxinventory then
-        self.inventory:addItem(obj)
-    else
+    self.inventory:addItem(obj)
+end
+
+function M:canCatchUp()
+    if self.inventory:getLen() >= self.maxinventory then
         self.signal:emit("hud", "message", "В инвентаре больше нет места!")
+        return false
+    else
+        return true
+    end
+end
+
+function M:dropItem(itemid)
+    local xshift = {0, 1, -1, 0,  0}
+    local yshift = {0, 0,  0, 1, -1}
+
+    local iter = 1
+
+    while true do
+        local curcell = self.world.lavel:get(self.pos.x + xshift[iter], self.pos.y + yshift[iter])
+
+        if curcell.name == "floor" and not curcell:isObject() then
+            local item = self.inventory:removeItem(itemid)
+
+            self.world.lavel:get(self.pos.x + xshift[iter], self.pos.y + yshift[iter]).object = item
+
+            return true
+        end 
+
+        iter = iter + 1
+
+        if iter > #xshift then
+            return false
+        end
     end
 end
 
