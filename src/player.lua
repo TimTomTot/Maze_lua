@@ -168,12 +168,14 @@ function M:setToMap()
             --сохранить текущую позицию
             self.pos = vector(rndPosI, rndPosJ)
 
+            ---[[
             --первоначальный расчет поля зрения
             self.world:solveFOV(
                 self.pos.x,
                 self.pos.y,
                 self.fovR
             )
+            --]]
 
             --установить отображение на игроке
             self.signal:emit("setFramePos", rndPosI, rndPosJ)
@@ -200,21 +202,25 @@ function M:step(di, dj)
         self.pos = self.pos + vector(di, dj)
 
         --выполнить функцию, предусмотренную картой для этой точки
-        local curCell = self.world.lavel:get(self.pos.x, self.pos.y)
+        -- local curCell = self.world.lavel:get(self.pos.x, self.pos.y)
 
-        curCell.stand(self, curCell)
+        -- curCell.stand(self, curCell)
       
+        --[[
         if curCell:isObject() then
             curCell.object:stand(self)
         end
+        --]]
 
+        ---[[
         --расчитать поле зрения
         self.world:solveFOV(
             self.pos.x,
             self.pos.y,
             self.fovR
         )
-
+        --]]
+        
         --и оповестить об этом объект отображения
         self.signal:emit("setFramePos", self.pos.x, self.pos.y)
         self.signal:emit("updateWorld")

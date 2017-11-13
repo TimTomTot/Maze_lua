@@ -50,7 +50,7 @@ function M:parseMap(str)
 
         for character in row:gmatch(".") do
             --создать ячейку
-            local tile, item = self.factory:newCell(character, {darkened = true})
+            local tile = self.factory:generateCell(character)
 
             if tile == nil then
                 error("tile on " .. tostring(columnIndex) .. " " .. tostring(rowIndex) .. " is nil!!!", 0)
@@ -61,13 +61,14 @@ function M:parseMap(str)
                 rowIndex,
                 tile
             )
+            
+            tile:setPosition(columnIndex, rowIndex)
 
             -- если в точке есть не только элементы карты
-            if item then
-                -- устанавливаем на это место нужный объект
-                local newItem = self.items:newitem(character)
-
-                self.lavel:get(columnIndex, rowIndex).object = newItem
+            local newItem = self.items:newitem(character)
+            
+            if newItem and not tile:isObject() then
+                tile:setObject(newItem)
             end
 
             columnIndex = columnIndex + 1
@@ -76,6 +77,7 @@ function M:parseMap(str)
     end
 end
 
+--[[
 --добавление карты уровня
 function M:addMap(inputMap)
     --подгоняем размер уровня под размер переданой карты
@@ -108,46 +110,36 @@ function M:addMap(inputMap)
         self.lavel:set (i, j, cellData)
     end
 end
+--]]
 
 --проверка, свободна ли данная ячейка
 function M:isEmpty(i, j)
-    --сначала задаем предположение, что свободна
-    local rez = true
-
-    --если она непроходима или в ней существо
-    --то счиаем ее занятой
-    local curCell = self.lavel:get(i, j)
-
-    if curCell.flag[LV_SOLID] or curCell:isCreature() then
-        rez = false
-    end
-
-    return rez
+    local curcell = self.lavel:get(i,j)
+    
+    return curcell:canCreature()
 end
 
 
 --добавление существа на карту
 function M:addCreature(cre, i, j)
-    self.lavel:get(i, j).creature = {
+    local curcell = self.lavel:get(i, j)
+    
+    curcell:setCreature({
         id = cre.id,
         tile = cre.tile
-    }
+    })
    
     self:setFramePos(i, j)
 end
 
 --сдвиг существа по указаным координатам
 function M:moveCreature(iold, jold, inew, jnew)
-    local creatureData = self.lavel:get(iold, jold).creature
+    local curcell = self.lavel:get(iold, jold)
+    local creatureData = curcell:removeCreature()
 
     --установить данные для новой точки
-    self.lavel:get(inew, jnew).creature = {
-        id = creatureData.id,
-        tile = creatureData.tile
-    }
-
-    --обнулить старую точку
-    self.lavel:get(iold, jold).creature = {}
+    local newcell = self.lavel:get(inew, jnew)
+    newcell:setCreature(creatureData)
 end
 
 --получить данные о размере карты
@@ -161,8 +153,8 @@ function M:solveFOV(i, j, R)
     self:fillShadow ()
 
     --убрать тень в точке с игроком
-    self.lavel:get(i, j).flag[LV_DARKENED] = false
-    self.lavel:get(i, j).flag[LV_EXPLORED] = true
+    self.lavel:get(i, j):illuminate()
+    self.lavel:get(i, j):explore()
 
     ---[[
     --создать список точек, до которых необходимо проложить видимость
@@ -184,13 +176,13 @@ function M:solveFOV(i, j, R)
     --функция, добавляющая точку на карте в разряд видимых
     addVisible.funct = function (x, y)
         if addVisible.empty then
-            self.lavel:get(x, y).flag[LV_DARKENED] = false
-            self.lavel:get(x, y).flag[LV_EXPLORED] = true
+            self.lavel:get(x, y):illuminate() 
+            self.lavel:get(x, y):explore() 
         end
 
         --проверка на выход за границы
         if self.lavel:isInRange(x, y) then
-            if self.lavel:get(x, y).flag[LV_OPAQUE] then
+            if not self.lavel:get(x, y):isTransparent() then
                 addVisible.empty = false
             end
         end
@@ -209,7 +201,7 @@ end --solveFOV
 function M:fillShadow()
     --просто залить всю карту тенями
     for i, j, val in self.lavel:iterate () do
-        val.flag[LV_DARKENED] = true
+        val:obscure()
     end
 end
 
@@ -258,11 +250,12 @@ function M:getFrameView()
             j + self.framePos.y
         )           
             
-        if curtile.flag[LV_EXPLORED] then
+        if curtile:isExplored() then
             self.frame:set(i, j, curtile.tile)
             
             if curtile:isObject() then
-                self.frame:set(i, j, curtile.object.tile)
+                local obj = curtile:getObject()
+                self.frame:set(i, j, obj.tile)
             end
         else
             self.frame:set(i, j, self.frame.empty)
@@ -279,8 +272,9 @@ function M:getCreatureViev()
             j + self.framePos.y
         )           
         
-        if curtile.flag[LV_EXPLORED] and curtile:isCreature() then
-            self.creatureframe:set(i, j, curtile.creature.tile)
+        if curtile:isExplored() and curtile:isCreature() then
+            local crea = curtile:getCreature()
+            self.creatureframe:set(i, j, crea.tile)
         else
             self.creatureframe:set(i, j, self.shadowframe.empty)
         end
@@ -296,7 +290,7 @@ function M:getShadowView()
             j + self.framePos.y
         )
         
-        if curtile.flag[LV_EXPLORED] and curtile.flag[LV_DARKENED] then
+        if curtile:isExplored() and curtile:isShaded() then
             self.shadowframe:set(i, j, "*")
         else
             self.shadowframe:set(i, j, self.shadowframe.empty)

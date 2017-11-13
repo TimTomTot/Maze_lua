@@ -18,8 +18,6 @@ function ItemsFactory:newitem(name)
         local newid = self.idmaker:getID()
 
         it = Bottle:new({ID = newid})
-    else
-        error(tostring(name) .. " Unknown item type!!", 0)
     end
     
     return it
