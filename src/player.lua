@@ -189,6 +189,13 @@ end
 
 --перемещение игрока (отностельно текущей позиции)
 function M:step(di, dj)
+    self.world:moveCreature(
+        self,
+        self.pos.x + di,
+        self.pos.y + dj
+    )
+    
+    --[[
     --проверить, свободна ли эта позиция на карте
     if self.world:isEmpty(self.pos.x + di, self.pos.y + dj) then
         --если свободна, то переместить в нее игрока
@@ -206,20 +213,20 @@ function M:step(di, dj)
 
         -- curCell.stand(self, curCell)
       
-        --[[
+        
         if curCell:isObject() then
             curCell.object:stand(self)
         end
-        --]]
+        
 
-        ---[[
+        
         --расчитать поле зрения
         self.world:solveFOV(
             self.pos.x,
             self.pos.y,
             self.fovR
         )
-        --]]
+        
         
         --и оповестить об этом объект отображения
         self.signal:emit("setFramePos", self.pos.x, self.pos.y)
@@ -228,6 +235,19 @@ function M:step(di, dj)
         --сообщение о том, что дальше продвинуться невозможно
         self.signal:emit("hud", "message", "Здесь не пройти!")
     end
+    --]]
+end
+
+function M:getPosition()
+    return self.pos.x, self.pos.y
+end
+
+function M:setPosition(x, y)
+    self.pos.x, self.pos.y = x, y
+end
+
+function M:getFovR()
+    return self.fovR
 end
 
 function M:addToInventory(obj)

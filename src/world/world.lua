@@ -29,6 +29,8 @@ function M:init(data)
     self.creatureframe = matrix:new(self.frameWidth, self.frameHeight)
     
     self.framePos = vector(0, 0)
+    
+    self.signal = data.signal
 end
 
 --функция парсинга карты мира из строкаи
@@ -133,13 +135,23 @@ function M:addCreature(cre, i, j)
 end
 
 --сдвиг существа по указаным координатам
-function M:moveCreature(iold, jold, inew, jnew)
-    local curcell = self.lavel:get(iold, jold)
-    local creatureData = curcell:removeCreature()
-
-    --установить данные для новой точки
+function M:moveCreature(creature, inew, jnew)
+    local creX, creY = creature:getPosition()
+    
+    local curcell = self.lavel:get(creX, creY)
     local newcell = self.lavel:get(inew, jnew)
-    newcell:setCreature(creatureData)
+    
+    if newcell:canCreature() then
+        -- curcell:removeCreature()
+        newcell:setCreature(curcell:removeCreature())
+
+        creature:setPosition(inew, jnew)
+        
+        self.signal:emit("setFramePos", inew, jnew)
+        self.signal:emit("updateWorld")
+        
+        self:solveFOV(inew, jnew, creature:getFovR())
+    end
 end
 
 --получить данные о размере карты

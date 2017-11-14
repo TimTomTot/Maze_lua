@@ -71,7 +71,11 @@ function st_gameMain:init()
     --настоить отбражение
     local Width, Height = 30, 16
 
-    GameWorld = world:new({W = Width, H = Height})
+    GameWorld = world:new({
+        W = Width, 
+        H = Height,
+        signal = viewSignal
+    })
     
     GameWorld:parseMap(self.someMap)
     
