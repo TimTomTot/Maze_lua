@@ -20,7 +20,7 @@ function M:init(data)
     --радиус обзора
     self.fovR = data.R
 
-    ---[[
+    --[[
     --регистрация действия с перемещением на лестнице
     self.signal:register(
         "downSteer",
@@ -194,48 +194,6 @@ function M:step(di, dj)
         self.pos.x + di,
         self.pos.y + dj
     )
-    
-    --[[
-    --проверить, свободна ли эта позиция на карте
-    if self.world:isEmpty(self.pos.x + di, self.pos.y + dj) then
-        --если свободна, то переместить в нее игрока
-        self.world:moveCreature(
-            self.pos.x,
-            self.pos.y,
-            self.pos.x + di,
-            self.pos.y + dj
-        )
-
-        self.pos = self.pos + vector(di, dj)
-
-        --выполнить функцию, предусмотренную картой для этой точки
-        -- local curCell = self.world.lavel:get(self.pos.x, self.pos.y)
-
-        -- curCell.stand(self, curCell)
-      
-        
-        if curCell:isObject() then
-            curCell.object:stand(self)
-        end
-        
-
-        
-        --расчитать поле зрения
-        self.world:solveFOV(
-            self.pos.x,
-            self.pos.y,
-            self.fovR
-        )
-        
-        
-        --и оповестить об этом объект отображения
-        self.signal:emit("setFramePos", self.pos.x, self.pos.y)
-        self.signal:emit("updateWorld")
-    else
-        --сообщение о том, что дальше продвинуться невозможно
-        self.signal:emit("hud", "message", "Здесь не пройти!")
-    end
-    --]]
 end
 
 function M:getPosition()

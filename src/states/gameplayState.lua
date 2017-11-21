@@ -181,6 +181,28 @@ function st_gameMain:init()
     --установить игрока на карту
     Hero:setToMap()
 
+    viewSignal:register(
+        "downSteer",
+        function ()
+            local posx, posy = Hero:getPosition()
+            if GameWorld:checkStairs(posx, posy) then
+                viewSignal:emit("generateMap")
+
+                viewSignal:emit(
+                    "hud",
+                    "message",
+                    "Ты перешел на новый этаж"
+                )
+            else
+                viewSignal:emit(
+                    "hud",
+                    "message",
+                    "Здесь нет лестницы!"
+                ) 
+            end
+        end
+    )
+
     --загрузка пользовательского интерфейса
     ui = hud("res/content/keyrusMedium.ttf", 22, viewSignal)
 

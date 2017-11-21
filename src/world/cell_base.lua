@@ -28,6 +28,7 @@ function Base:init(data)
     self.x = data.x or nil
     self.y = data.y or nil
     self.name = data.name
+    self.tiletype = data.tiletype
     self.tile = data.tile
     self.walkable = data.walkable
     self.transparent = data.transparent
@@ -72,6 +73,18 @@ end
 
 function Base:isShaded()
     return self.shaded
+end
+
+function Base:getType()
+    return self.tiletype
+end
+
+function Base:isType(tiletype)
+    if tiletype == self.tiletype then
+        return true
+    else
+        return false
+    end
 end
 
 function Base:isCreature()

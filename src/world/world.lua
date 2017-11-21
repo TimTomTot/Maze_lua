@@ -31,6 +31,9 @@ function M:init(data)
     self.framePos = vector(0, 0)
     
     self.signal = data.signal
+
+    -- список всех лестниц на карте
+    self.stairslist = {}
 end
 
 --функция парсинга карты мира из строкаи
@@ -73,46 +76,13 @@ function M:parseMap(str)
                 tile:setObject(newItem)
             end
 
+            self:tryAddStairs(tile)
+
             columnIndex = columnIndex + 1
         end
         rowIndex = rowIndex + 1
     end
 end
-
---[[
---добавление карты уровня
-function M:addMap(inputMap)
-    --подгоняем размер уровня под размер переданой карты
-    self.lavel = matrix:new(inputMap.N, inputMap.M)
-
-    --переносим данные
-    for i, j, _ in self.lavel:iterate () do
-        --структура данных для каждой ячейки
-        local cellData = {
-            --слой с картой
-            map = {
-                val = inputMap:Get(i, j),
-                tile = inputMap:getTile (i, j)
-            },
-
-            --слой с игровыми объектами
-            odjects = {present = false},
-
-            --слой с игровыми персонажами
-            creatures = {},
-
-            --слой с затемнением
-            --в начале всегда затемнено
-            visible = "shadow",
-
-            --слой со свединиями о посещении
-            --в начале все точки считаются не посещенными
-            visited = false
-        }
-        self.lavel:set (i, j, cellData)
-    end
-end
---]]
 
 --проверка, свободна ли данная ячейка
 function M:isEmpty(i, j)
@@ -141,17 +111,44 @@ function M:moveCreature(creature, inew, jnew)
     local curcell = self.lavel:get(creX, creY)
     local newcell = self.lavel:get(inew, jnew)
     
-    if newcell:canCreature() then
-        -- curcell:removeCreature()
-        newcell:setCreature(curcell:removeCreature())
+    if newcell:isWalkable() then
+        if newcell:canCreature() then
+            self:creatureStep(creature, inew, jnew)
+        else
+            if newcell:isType("door") then
+                local x, y = newcell:getPosition()
 
-        creature:setPosition(inew, jnew)
-        
-        self.signal:emit("setFramePos", inew, jnew)
-        self.signal:emit("updateWorld")
-        
-        self:solveFOV(inew, jnew, creature:getFovR())
+                self.lavel:set(
+                    x,
+                    y,
+                    self.factory:generateCell("opendoor")
+                )
+
+                self:creatureStep(creature, x, y)
+
+                self.signal:emit("hud", "message", "Ты открываешь дверь")
+            end
+        end
+    else
+        self.signal:emit("hud", "message", "Здесь не пройти!")
     end
+end
+
+-- переставить существо на новую точку
+-- TODO переименовать и произвести рефакторинг
+function M:creatureStep(creature, toX, toY)
+    local fromcell = self.lavel:get(creature:getPosition())
+
+    assert(creature ~= nil)
+
+    creature:setPosition(toX, toY)
+    local newcell = self.lavel:get(toX, toY)
+    newcell:setCreature(fromcell:removeCreature())
+
+    self:solveFOV(toX, toY, creature:getFovR())
+
+    self.signal:emit("setFramePos", toX, toY)
+    self.signal:emit("updateWorld")
 end
 
 --получить данные о размере карты
@@ -310,6 +307,19 @@ function M:getShadowView()
     end
     
     return self.shadowframe
+end
+
+-- добавление лестниц из карты
+function M:tryAddStairs(tile)
+    if tile:isType("stairs") then
+        table.insert(self.stairslist, tile)
+    end
+end
+
+function M:checkStairs(posx, poxy)
+    local curcell = self.lavel:get(posx, poxy)
+
+    return curcell:isType("stairs")
 end
 
 return M
