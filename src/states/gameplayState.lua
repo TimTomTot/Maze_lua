@@ -202,6 +202,23 @@ function st_gameMain:init()
             end
         end
     )
+    
+    viewSignal:register(
+        "catchUp",
+        function ()
+            local catch = GameWorld:catchUp(Hero)
+            
+            if catch then               
+                viewSignal:emit("updateWorld")
+            else
+                viewSignal:emit(
+                    "hud",
+                    "message",
+                    "Здесь нечего поднимать"
+                )            
+            end
+        end
+    )
 
     --загрузка пользовательского интерфейса
     ui = hud("res/content/keyrusMedium.ttf", 22, viewSignal)

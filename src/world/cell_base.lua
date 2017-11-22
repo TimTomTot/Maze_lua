@@ -6,7 +6,9 @@
     - ID
     - позиция
     - название
+    - тип тайла 
     - тайл
+    - сообщение при нахождении шероя на этом тайле
     - проходима
     - прозрачна
     - разведана
@@ -30,6 +32,7 @@ function Base:init(data)
     self.name = data.name
     self.tiletype = data.tiletype
     self.tile = data.tile
+    self.standmsg = data.standmsg or nil
     self.walkable = data.walkable
     self.transparent = data.transparent
     self.explored = data.explored
@@ -85,6 +88,10 @@ function Base:isType(tiletype)
     else
         return false
     end
+end
+
+function Base:getMsg()
+    return self.standmsg
 end
 
 function Base:isCreature()

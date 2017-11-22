@@ -114,7 +114,8 @@ function st_inventoryState:__updateMenu__()
     					)
     				elseif actiontype == "drop" then
     					-- дать команду на выбрасывание предмета на карту
-    					local res = self.inventoryholder:dropItem(item.ID)
+    					local world = self.inventoryholder.world
+                        local res = world:dropItem(item, self.inventoryholder:getPosition())
 
     					if res then
     						self.inventory:removeItem(item.ID)

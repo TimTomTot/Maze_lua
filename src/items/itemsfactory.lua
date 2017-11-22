@@ -17,7 +17,9 @@ function ItemsFactory:newitem(name)
     if name == "bottle" or name == "|" then
         local newid = self.idmaker:getID()
 
-        it = Bottle:new({ID = newid})
+        it = Bottle:new({
+            ID = newid
+        })
     end
     
     return it

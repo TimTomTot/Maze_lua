@@ -15,14 +15,11 @@ function Bottle:init(data)
     self.dropdescription = "Ты выбрасываешь бутылочку"
     self.tile = "|"
     self.catchUpMessage = "Ты подбираешь бутылочку"
+    self.standMsg = "Здесь лежит бутылочка"
 end
 
-function Bottle:stand(creature)
-    creature.signal:emit(
-        "hud",
-        "message",
-        "Здесь лежит бутылочка"
-    )
+function Bottle:getMsg()
+    return self.standMsg
 end
 
 return Bottle

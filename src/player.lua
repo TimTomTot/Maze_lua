@@ -20,43 +20,6 @@ function M:init(data)
     --радиус обзора
     self.fovR = data.R
 
-    --[[
-    --регистрация действия с перемещением на лестнице
-    self.signal:register(
-        "downSteer",
-        function ()
-            --для точки, на которой стоит игрок вызывается функция action
-            local rez = self.world.lavel:get(self.pos.x, self.pos.y).action(self, AC_DOWNSTAIRS)
-
-            --если action не задан, то выдается сообщение о том, что лестницы нет
-            if not rez then
-                self.signal:emit(
-                    "hud",
-                    "message",
-                    "Здесь нет лестницы!"
-                )
-            end
-        end
-    )
-    --]]
-
-    -- действие поднятия предмета с пола
-    self.signal:register(
-        "catchUp",
-        function ()
-            local curcell = self.world.lavel:get(self.pos.x, self.pos.y)
-            local rez = self.world.lavel:get(self.pos.x, self.pos.y).action(self, AC_PICKUP, curcell)
-
-            if not rez then
-                self.signal:emit(
-                    "hud",
-                    "message",
-                    "Здесь нечего поднимать!"
-                )
-            end
-        end
-    )
-
     --регистрация действия с открытием двери
     self.signal:register(
         "openDoor",
@@ -218,31 +181,6 @@ function M:canCatchUp()
         return false
     else
         return true
-    end
-end
-
-function M:dropItem(itemid)
-    local xshift = {0, 1, -1, 0,  0}
-    local yshift = {0, 0,  0, 1, -1}
-
-    local iter = 1
-
-    while true do
-        local curcell = self.world.lavel:get(self.pos.x + xshift[iter], self.pos.y + yshift[iter])
-
-        if curcell.name == "floor" and not curcell:isObject() then
-            local item = self.inventory:removeItem(itemid)
-
-            self.world.lavel:get(self.pos.x + xshift[iter], self.pos.y + yshift[iter]).object = item
-
-            return true
-        end 
-
-        iter = iter + 1
-
-        if iter > #xshift then
-            return false
-        end
     end
 end
 

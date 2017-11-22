@@ -114,6 +114,7 @@ function M:moveCreature(creature, inew, jnew)
     if newcell:isWalkable() then
         if newcell:canCreature() then
             self:creatureStep(creature, inew, jnew)
+            self:publishTileMessage(inew, jnew)
         else
             if newcell:isType("door") then
                 local x, y = newcell:getPosition()
@@ -320,6 +321,63 @@ function M:checkStairs(posx, poxy)
     local curcell = self.lavel:get(posx, poxy)
 
     return curcell:isType("stairs")
+end
+
+function M:publishTileMessage(posx, posy)
+    local curcell = self.lavel:get(posx, posy)
+    
+    local msg = curcell:getMsg()
+    
+    if msg then
+        self.signal:emit("hud", "message", msg)
+    else
+        if curcell:isObject() then
+            self.signal:emit("hud", "message", curcell:getObject():getMsg())
+        end
+    end
+end
+
+function M:catchUp(cre)
+    local posx, posy = cre:getPosition()
+    local curcell = self.lavel:get(posx, posy)
+    
+    if curcell:isObject() then
+        local object = curcell:removeObject()
+        
+        assert(cre.tile == "@")
+        assert(object)
+        
+        cre:addToInventory(object)
+        
+        self.signal:emit("hud", "message", object.catchUpMessage)
+        
+        return true
+    end
+    
+    return false
+end
+
+function M:dropItem(item, posx, posy)
+    local xshift = {0, 1, -1, 0,  0}
+    local yshift = {0, 0,  0, 1, -1}
+    
+    local iter = 1
+
+    while true do
+        local curcell = self.lavel:get(posx + xshift[iter], posy + yshift[iter])
+
+        if curcell:canObject() then
+            curcell:setObject(item)
+
+            return true
+        end 
+
+        iter = iter + 1
+
+        if iter > #xshift then
+            return false
+        end
+    end
 end
 
 return M
