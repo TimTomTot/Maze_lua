@@ -220,6 +220,48 @@ function st_gameMain:init()
         end
     )
 
+    viewSignal:register(
+        "openDoor",
+        function ()
+            local x, y = Hero:getPosition()
+
+            local res, posx, posy = GameWorld:checkNeighborDoors(x, y, "closedoor")
+
+            if res then
+                GameWorld:openDoor(posx, posy)
+                GameWorld:solveFOV(x, y, Hero:getFovR())
+                viewSignal:emit("updateWorld")
+            else
+                viewSignal:emit(
+                    "hud",
+                    "message",
+                    "Вокруг нет дверей, которые можно открыть!"
+                ) 
+            end
+        end
+    )
+
+    viewSignal:register(
+        "closeDoor",
+        function ()
+            local x, y = Hero:getPosition()
+
+            local res, posx, posy = GameWorld:checkNeighborDoors(x, y, "opendoor")
+
+            if res then
+                GameWorld:closeDoor(posx, posy)
+                GameWorld:solveFOV(x, y, Hero:getFovR())
+                viewSignal:emit("updateWorld")
+            else
+                viewSignal:emit(
+                    "hud",
+                    "message",
+                    "Вокруг нет дверей, которые можно закрыть!"
+                ) 
+            end
+        end
+    )
+
     --загрузка пользовательского интерфейса
     ui = hud("res/content/keyrusMedium.ttf", 22, viewSignal)
 

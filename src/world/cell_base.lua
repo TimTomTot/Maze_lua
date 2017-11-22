@@ -62,6 +62,10 @@ function Base:getPosition()
     return self.x, self.y
 end
 
+function Base:getName()
+    return self.name
+end
+
 function Base:isWalkable()
     return self.walkable
 end

@@ -119,15 +119,9 @@ function M:moveCreature(creature, inew, jnew)
             if newcell:isType("door") then
                 local x, y = newcell:getPosition()
 
-                self.lavel:set(
-                    x,
-                    y,
-                    self.factory:generateCell("opendoor")
-                )
+                self:openDoor(x, y)
 
                 self:creatureStep(creature, x, y)
-
-                self.signal:emit("hud", "message", "Ты открываешь дверь")
             end
         end
     else
@@ -342,15 +336,19 @@ function M:catchUp(cre)
     local curcell = self.lavel:get(posx, posy)
     
     if curcell:isObject() then
-        local object = curcell:removeObject()
+        if cre:canCatchUp() then
+            local object = curcell:removeObject()
         
-        assert(cre.tile == "@")
-        assert(object)
+            assert(cre.tile == "@")
+            assert(object)
         
-        cre:addToInventory(object)
         
-        self.signal:emit("hud", "message", object.catchUpMessage)
+            cre:addToInventory(object)
         
+
+            self.signal:emit("hud", "message", object.catchUpMessage)
+        end
+
         return true
     end
     
@@ -358,8 +356,8 @@ function M:catchUp(cre)
 end
 
 function M:dropItem(item, posx, posy)
-    local xshift = {0, 1, -1, 0,  0}
-    local yshift = {0, 0,  0, 1, -1}
+    local xshift = {0, 1, -1, 0,  0, -1,  1, -1, 1}
+    local yshift = {0, 0,  0, 1, -1, -1, -1,  1, 1}
     
     local iter = 1
 
@@ -378,6 +376,55 @@ function M:dropItem(item, posx, posy)
             return false
         end
     end
+end
+
+-- пока ограничение на то, что по соседству может быть только 1 дверь
+-- TODO если больше 1 двери - сделать выбор, какую дверь открывать
+function M:checkNeighborDoors(posx, posy, celltype)
+    local xshift = {1, -1, 0,  0}
+    local yshift = {0,  0, 1, -1}
+
+    local iter = 1
+
+    while true do
+        local curcell = self.lavel:get(posx + xshift[iter], posy + yshift[iter])
+
+        if curcell:isType("door") and curcell:getName() == celltype then
+            return true, posx + xshift[iter], posy + yshift[iter]  
+        end        
+
+        iter = iter + 1
+
+        if iter > #xshift  then
+            return false
+        end
+    end
+end
+
+function M:openDoor(posx, posy)
+    self.lavel:set(
+        posx,
+        posy,
+        self.factory:generateCell("opendoor")
+    )
+
+    local curcell = self.lavel:get(posx, posy)
+    curcell:setPosition(posx, posy)
+
+    self.signal:emit("hud", "message", "Ты открываешь дверь")
+end
+
+function M:closeDoor(posx, posy)
+    self.lavel:set(
+        posx,
+        posy,
+        self.factory:generateCell("closedoor")
+    )
+
+    local curcell = self.lavel:get(posx, posy)
+    curcell:setPosition(posx, posy)
+
+    self.signal:emit("hud", "message", "Ты закрываешь дверь")
 end
 
 return M
