@@ -1,4 +1,7 @@
---еще один вариант модуля world, без лифней сложности
+---
+-- Модуль содержит функции по работе с миром игры.
+-- Представлят из себя класс 30log
+-- @module World
 
 local class          = require "30log"
 local matrix         = require "utils.matrix"
@@ -9,7 +12,12 @@ local vector   = require "hump.vector"
 
 local M = class("World")
 
---конструктор
+---
+-- Конструктор.
+-- @param data таблица с входными параметрами:
+-- @param data.W размер мира по горизонтали
+-- @param data.H размер мира по вертикали
+-- @param data.signal объект, реализующий паттерн Наблюдтель
 function M:init(data)
     --инициализация карты уровня
     self.lavel = {}
@@ -36,7 +44,12 @@ function M:init(data)
     self.stairslist = {}
 end
 
---функция парсинга карты мира из строкаи
+---
+-- Создание карты мира из входной строки.
+-- Входная строка разбирается в соответствии с тем, данные о каких тайлах занесены в 
+-- объект cellfactory. Если переданная строка не является прямоугольной, метод вызывает ошибку
+-- полученная карта сохраняется во внутреннем поле объекта World
+-- @param str входная строка, содержащая карту игрового мира
 function M:parseMap(str)
     --получить размеры карты из строки
     local N = #(str:match("[^\n]+"))
@@ -84,7 +97,19 @@ function M:parseMap(str)
     end
 end
 
---проверка, свободна ли данная ячейка
+---
+-- Получение даннх о размере карты
+-- @return размер по горизонтали, размер по вертикали 
+function M:getMapSize ()
+    return self.lavel:getWidht(), self.lavel:getHeight()
+end
+
+---
+-- Проверка, является ли место по задынным координатам свободным.
+-- Другими словами, может ли на нем размещаться игровой агент
+-- @param i - х координата 
+-- @param j - у координата
+-- @return true если позиция свободна, false если занята
 function M:isEmpty(i, j)
     local curcell = self.lavel:get(i,j)
     
@@ -92,7 +117,11 @@ function M:isEmpty(i, j)
 end
 
 
---добавление существа на карту
+---
+-- Установка существа на карту
+-- @param cre существо
+-- @param i - х координата
+-- @param j - у координата
 function M:addCreature(cre, i, j)
     local curcell = self.lavel:get(i, j)
     
@@ -144,11 +173,6 @@ function M:creatureStep(creature, toX, toY)
 
     self.signal:emit("setFramePos", toX, toY)
     self.signal:emit("updateWorld")
-end
-
---получить данные о размере карты
-function M:getMapSize ()
-    return self.lavel:getWidht(), self.lavel:getHeight()
 end
 
 --расчет поля видимости
