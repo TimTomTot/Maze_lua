@@ -134,7 +134,6 @@ function st_gameMain:init()
         function () gamestate.switch(st_quitMenu) end
     )
 
-    ---[[
     --регестрация функции генерации новой карты
     viewSignal:register(
         "generateMap",
@@ -144,7 +143,6 @@ function st_gameMain:init()
             Hero:setToMap()
         end
     )
-    --]]
     
     -- обновление изображения 
     viewSignal:register(

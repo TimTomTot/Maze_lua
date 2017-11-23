@@ -175,20 +175,4 @@ function M:maptostring (map)
    return resultStr
 end
 
--------------------------------------
---[[           Тесты             ]]--
--------------------------------------
-
---проверки
-local function test_Maze ()
-   math.randomseed (os.time ())
-
-   local map = M:Generate (20, 60)
-
-   --map:Write ()
-   --M:Parse (map)
-
-   print(M:maptostring(map))
-end
-
 return M

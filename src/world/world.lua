@@ -1,5 +1,6 @@
 ---
 -- Модуль содержит функции по работе с миром игры.
+--
 -- Представлят из себя класс 30log
 -- @module World
 
@@ -14,6 +15,7 @@ local M = class("World")
 
 ---
 -- Конструктор.
+--
 -- @param data таблица с входными параметрами:
 -- @param data.W размер мира по горизонтали
 -- @param data.H размер мира по вертикали
@@ -46,6 +48,7 @@ end
 
 ---
 -- Создание карты мира из входной строки.
+--
 -- Входная строка разбирается в соответствии с тем, данные о каких тайлах занесены в 
 -- объект cellfactory. Если переданная строка не является прямоугольной, метод вызывает ошибку
 -- полученная карта сохраняется во внутреннем поле объекта World
@@ -99,16 +102,19 @@ end
 
 ---
 -- Получение даннх о размере карты
--- @return размер по горизонтали, размер по вертикали 
+--
+-- @return размер по горизонтали
+-- @return размер по вертикали 
 function M:getMapSize ()
     return self.lavel:getWidht(), self.lavel:getHeight()
 end
 
 ---
 -- Проверка, является ли место по задынным координатам свободным.
+--
 -- Другими словами, может ли на нем размещаться игровой агент
--- @param i - х координата 
--- @param j - у координата
+-- @param i х координата 
+-- @param j у координата
 -- @return true если позиция свободна, false если занята
 function M:isEmpty(i, j)
     local curcell = self.lavel:get(i,j)
@@ -119,6 +125,7 @@ end
 
 ---
 -- Установка существа на карту
+--
 -- @param cre существо
 -- @param i - х координата
 -- @param j - у координата
@@ -133,7 +140,14 @@ function M:addCreature(cre, i, j)
     self:setFramePos(i, j)
 end
 
---сдвиг существа по указаным координатам
+---
+-- Сдвиг существа по указаным координатам.
+--
+-- Существо будет сдвинуто на указанную точку, если впереди закрытая дверь,
+-- то сначала она откроется, а только потом существо сдвинется
+-- @param creature существо, которое нужно передвинуть 
+-- @param inew X-координата точки назначения 
+-- @param jnew Y-координата точки назначения
 function M:moveCreature(creature, inew, jnew)
     local creX, creY = creature:getPosition()
     
@@ -158,8 +172,13 @@ function M:moveCreature(creature, inew, jnew)
     end
 end
 
--- переставить существо на новую точку
+---
+-- Переставить существо на новую точку.
+--
 -- TODO переименовать и произвести рефакторинг
+-- @param creature существо
+-- @param toX X-координата назначения
+-- @param toY Y-координата назначения
 function M:creatureStep(creature, toX, toY)
     local fromcell = self.lavel:get(creature:getPosition())
 
@@ -175,7 +194,12 @@ function M:creatureStep(creature, toX, toY)
     self.signal:emit("updateWorld")
 end
 
---расчет поля видимости
+---
+-- Расчет поля видимости
+--
+-- @param i X-координата от центра которой нужно расчитать поле видимости
+-- @param j Y-координата от центра которой нужно расчитать поле видимости
+-- @param R радиус обзора
 function M:solveFOV(i, j, R)
     --предварительно обновить карту теней
     self:fillShadow ()
@@ -225,7 +249,10 @@ function M:solveFOV(i, j, R)
     --]]
 end --solveFOV
 
---вспомогательная функция, обновляющая карту видимости
+---
+-- Обновление карты видимости.
+--
+-- Вся карта затеняется для дальнейшего расчета зоны обзора
 function M:fillShadow()
     --просто залить всю карту тенями
     for i, j, val in self.lavel:iterate () do
@@ -233,7 +260,10 @@ function M:fillShadow()
     end
 end
 
---ограничение для фрейма
+---
+-- Расчет ограничение для фрейма
+--
+-- Проверяет, что фрейм отображения не вышел за границы карты 
 function M:checkFrame()
     --ограничения
     if self.framePos.x < 0 then
@@ -253,7 +283,11 @@ function M:checkFrame()
     end
 end
 
---сдвиг фрейма отображения относительно текущей позиции
+---
+-- Сдвиг фрейма отображения относительно текущей позиции
+--
+-- @param di относительная координата для сдвига по оси X
+-- @param dj относительная координата для сдвига по оси Y
 function M:moveFrame(di, dj)
     self.framePos.x = self.framePos.x + di
     self.framePos.y = self.framePos.y + dj
@@ -262,7 +296,13 @@ function M:moveFrame(di, dj)
     self:checkFrame()
 end
 
---установка фрейма на определенное место карты (с точкой в середине)
+---
+-- Установка фрейма на определенное место на карте
+-- 
+-- фрейм отображения устанавливается так, чтбы переданые координаты
+-- оказались в середине экрана
+-- @param i X-координата на карте
+-- @param j Y-координата на карте
 function M:setFramePos(i, j)
     self.framePos.x = i - math.ceil(self.frame:getWidht() / 2)
     self.framePos.y = j - math.ceil(self.frame:getHeight() / 2)
@@ -271,6 +311,10 @@ function M:setFramePos(i, j)
     self:checkFrame()
 end
 
+---
+-- Получить объект пригодный для отображения с данными о карте и объекта на ней
+-- 
+-- @return объект matrix в узлах которого символы для отображения
 function M:getFrameView()
     for i, j, val in self.frame:iterate() do
         local curtile = self.lavel:get(
@@ -293,6 +337,10 @@ function M:getFrameView()
     return self.frame
 end
 
+---
+-- Получить объект пригодный для отображения с данными о существах на карте
+-- 
+-- @return объект matrix в узлах которого символы для отображения
 function M:getCreatureViev()
     for i, j, val in self.creatureframe:iterate() do
         local curtile = self.lavel:get(
@@ -311,6 +359,10 @@ function M:getCreatureViev()
     return self.creatureframe
 end
 
+---
+-- Получить объект пригодный для отображения с данными о затененности карты
+-- 
+-- @return объект matrix в узлах которого символы для отображения
 function M:getShadowView()
     for i, j, val in self.shadowframe:iterate() do
         local curtile = self.lavel:get(

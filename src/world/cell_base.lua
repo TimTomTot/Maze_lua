@@ -46,6 +46,8 @@ end
 
 ---
 -- Установить координаты тайла
+-- @param x Х-координата
+-- @param y У-координата
 function Base:setPosition(x, y)
     self.x = x
     self.y = y
@@ -53,30 +55,36 @@ end
 
 ---
 -- Получить Х-координату тайла
+-- @return Х-координата
 function Base:getX()
     return self.x
 end
 
 ---
 -- Получить У-координату тайла
+-- @return У-координата
 function Base:getY()
     return self.y
 end
 
 ---
 -- Получить координаты тайла
+-- @return Х-координата
+-- @return У-координата
 function Base:getPosition()
     return self.x, self.y
 end
 
 ---
 -- Получить имя тайла
+-- @return имя тайла, заданое в конструкторе в параметре data.name
 function Base:getName()
     return self.name
 end
 
 --- 
 -- Проверка, является ли тайл проходимым
+-- @return true если тайл задан как проходимый в параметре data.walkable
 function Base:isWalkable()
     return self.walkable
 end

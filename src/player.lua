@@ -42,14 +42,12 @@ function M:setToMap()
             --сохранить текущую позицию
             self.pos = vector(rndPosI, rndPosJ)
 
-            ---[[
             --первоначальный расчет поля зрения
             self.world:solveFOV(
                 self.pos.x,
                 self.pos.y,
                 self.fovR
             )
-            --]]
 
             --установить отображение на игроке
             self.signal:emit("setFramePos", rndPosI, rndPosJ)

@@ -123,39 +123,4 @@ function M:BreakWall (i, j, di, dj)
    end
 end
 
--------------------------------------
---[[           Тесты             ]]--
--------------------------------------
-
---размерность протолабиринта
-local function test_ProtoLen ()
-   --создадим лабиринт и проверим его размеры
-   local lenN, lenM = 10, 12
-   local protoA = M:New (lenN, lenM)
-
-   assert (protoA.N == lenN and protoA.M == lenM,
-      "Неверно заданы размеры протолабиринта!" ..
-      "\nproto:N = " .. tostring (protoA.N) .. " proto:M = " .. tostring (protoA.M))
-
-   protoA = nil
-end
-
---проверка возможности прохода
-local function test_IsGo ()
-   local testA = M:New (3, 3)
-
-   --print ("IsGo?", testA:IsGo (2, 2, -1, 0))
-
-   --testA:Get (2,2):SetWall (1, 0)
-
-   --попробуем нарисовать протолабиринт на экране
-   testA:Write ()
-
-   --сломать стену
-   for di, dj in neig:Iter () do
-      testA:BreakWall (2, 2, di, dj)
-      testA:Write ()
-   end
-end
-
 return M
