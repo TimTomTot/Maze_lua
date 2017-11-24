@@ -1,0 +1,485 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+<head>
+    <title>Reference</title>
+    <link rel="stylesheet" href="../ldoc.css" type="text/css" />
+</head>
+<body>
+
+<div id="container">
+
+<div id="product">
+	<div id="product_logo"></div>
+	<div id="product_name"><big><b></b></big></div>
+	<div id="product_description"></div>
+</div> <!-- id="product" -->
+
+
+<div id="main">
+
+
+<!-- Menu -->
+
+<div id="navigation">
+<br/>
+<h1>ldoc</h1>
+
+<ul>
+  <li><a href="../index.html">Index</a></li>
+</ul>
+
+<h2>Contents</h2>
+<ul>
+<li><a href="#Functions">Functions</a></li>
+</ul>
+
+
+<h2>Modules</h2>
+<ul class="nowrap">
+  <li><a href="../modules/CellBase.html">CellBase</a></li>
+  <li><a href="../modules/Map.html">Map</a></li>
+  <li><strong>World</strong></li>
+</ul>
+
+</div>
+
+<div id="content">
+
+<h1>Module <code>World</code></h1>
+<p>Модуль содержит функции по работе с миром игры.</p>
+<p>
+<p> Представлят из себя класс 30log</p>
+
+
+<h2><a href="#Functions">Functions</a></h2>
+<table class="function_list">
+	<tr>
+	<td class="name" nowrap><a href="#init">init (data)</a></td>
+	<td class="summary">Конструктор.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#parseMap">parseMap (str)</a></td>
+	<td class="summary">Создание карты мира из входной строки.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#getMapSize">getMapSize ()</a></td>
+	<td class="summary">Получение даннх о размере карты</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#isEmpty">isEmpty (i, j)</a></td>
+	<td class="summary">Проверка, является ли место по задынным координатам свободным.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#addCreature">addCreature (cre, i, j)</a></td>
+	<td class="summary">Установка существа на карту</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#moveCreature">moveCreature (creature, inew, jnew)</a></td>
+	<td class="summary">Сдвиг существа по указаным координатам.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#creatureStep">creatureStep (creature, toX, toY)</a></td>
+	<td class="summary">Переставить существо на новую точку.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#solveFOV">solveFOV (i, j, R)</a></td>
+	<td class="summary">Расчет поля видимости</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#fillShadow">fillShadow ()</a></td>
+	<td class="summary">Обновление карты видимости.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#checkFrame">checkFrame ()</a></td>
+	<td class="summary">Расчет ограничение для фрейма</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#moveFrame">moveFrame (di, dj)</a></td>
+	<td class="summary">Сдвиг фрейма отображения относительно текущей позиции</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#setFramePos">setFramePos (i, j)</a></td>
+	<td class="summary">Установка фрейма на определенное место на карте
+
+ фрейм отображения устанавливается так, чтбы переданые координаты
+ оказались в середине экрана</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#getFrameView">getFrameView ()</a></td>
+	<td class="summary">Получить объект пригодный для отображения с данными о карте и объекта на ней</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#getCreatureViev">getCreatureViev ()</a></td>
+	<td class="summary">Получить объект пригодный для отображения с данными о существах на карте</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#getShadowView">getShadowView ()</a></td>
+	<td class="summary">Получить объект пригодный для отображения с данными о затененности карты</td>
+	</tr>
+</table>
+
+<br/>
+<br/>
+
+
+    <h2 class="section-header "><a name="Functions"></a>Functions</h2>
+
+    <dl class="function">
+    <dt>
+    <a name = "init"></a>
+    <strong>init (data)</strong>
+    </dt>
+    <dd>
+    Конструктор.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">data</span> таблица с входными параметрами:
+        <ul>
+        <li><span class="parameter">W</span>
+         размер мира по горизонтали
+        </li>
+        <li><span class="parameter">H</span>
+         размер мира по вертикали
+        </li>
+        <li><span class="parameter">signal</span>
+         объект, реализующий паттерн Наблюдтель
+        </li>
+        </li></ul>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "parseMap"></a>
+    <strong>parseMap (str)</strong>
+    </dt>
+    <dd>
+    Создание карты мира из входной строки.
+<p> Входная строка разбирается в соответствии с тем, данные о каких тайлах занесены в
+ объект cellfactory. Если переданная строка не является прямоугольной, метод вызывает ошибку
+ полученная карта сохраняется во внутреннем поле объекта World
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">str</span>
+         входная строка, содержащая карту игрового мира
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "getMapSize"></a>
+    <strong>getMapSize ()</strong>
+    </dt>
+    <dd>
+    Получение даннх о размере карты
+
+
+
+    <h3>Returns:</h3>
+    <ol>
+        <li>
+        размер по горизонтали</li>
+        <li>
+        размер по вертикали</li>
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "isEmpty"></a>
+    <strong>isEmpty (i, j)</strong>
+    </dt>
+    <dd>
+    Проверка, является ли место по задынным координатам свободным.
+<p> Другими словами, может ли на нем размещаться игровой агент
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">i</span>
+         х координата
+        </li>
+        <li><span class="parameter">j</span>
+         у координата
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+        true если позиция свободна, false если занята
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "addCreature"></a>
+    <strong>addCreature (cre, i, j)</strong>
+    </dt>
+    <dd>
+    Установка существа на карту
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">cre</span>
+         существо
+        </li>
+        <li><span class="parameter">i</span>
+         - х координата
+        </li>
+        <li><span class="parameter">j</span>
+         - у координата
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "moveCreature"></a>
+    <strong>moveCreature (creature, inew, jnew)</strong>
+    </dt>
+    <dd>
+    Сдвиг существа по указаным координатам.
+<p> Существо будет сдвинуто на указанную точку, если впереди закрытая дверь,
+ то сначала она откроется, а только потом существо сдвинется
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">creature</span>
+         существо, которое нужно передвинуть
+        </li>
+        <li><span class="parameter">inew</span>
+         X-координата точки назначения
+        </li>
+        <li><span class="parameter">jnew</span>
+         Y-координата точки назначения
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "creatureStep"></a>
+    <strong>creatureStep (creature, toX, toY)</strong>
+    </dt>
+    <dd>
+    Переставить существо на новую точку.
+<p> TODO переименовать и произвести рефакторинг
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">creature</span>
+         существо
+        </li>
+        <li><span class="parameter">toX</span>
+         X-координата назначения
+        </li>
+        <li><span class="parameter">toY</span>
+         Y-координата назначения
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "solveFOV"></a>
+    <strong>solveFOV (i, j, R)</strong>
+    </dt>
+    <dd>
+    Расчет поля видимости
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">i</span>
+         X-координата от центра которой нужно расчитать поле видимости
+        </li>
+        <li><span class="parameter">j</span>
+         Y-координата от центра которой нужно расчитать поле видимости
+        </li>
+        <li><span class="parameter">R</span>
+         радиус обзора
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "fillShadow"></a>
+    <strong>fillShadow ()</strong>
+    </dt>
+    <dd>
+    Обновление карты видимости.
+<p> Вся карта затеняется для дальнейшего расчета зоны обзора
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "checkFrame"></a>
+    <strong>checkFrame ()</strong>
+    </dt>
+    <dd>
+    Расчет ограничение для фрейма  Проверяет, что фрейм отображения не вышел за границы карты
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "moveFrame"></a>
+    <strong>moveFrame (di, dj)</strong>
+    </dt>
+    <dd>
+    Сдвиг фрейма отображения относительно текущей позиции
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">di</span>
+         относительная координата для сдвига по оси X
+        </li>
+        <li><span class="parameter">dj</span>
+         относительная координата для сдвига по оси Y
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "setFramePos"></a>
+    <strong>setFramePos (i, j)</strong>
+    </dt>
+    <dd>
+    Установка фрейма на определенное место на карте
+
+ фрейм отображения устанавливается так, чтбы переданые координаты
+ оказались в середине экрана
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">i</span>
+         X-координата на карте
+        </li>
+        <li><span class="parameter">j</span>
+         Y-координата на карте
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "getFrameView"></a>
+    <strong>getFrameView ()</strong>
+    </dt>
+    <dd>
+    Получить объект пригодный для отображения с данными о карте и объекта на ней
+
+
+
+    <h3>Returns:</h3>
+    <ol>
+
+        объект matrix в узлах которого символы для отображения
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "getCreatureViev"></a>
+    <strong>getCreatureViev ()</strong>
+    </dt>
+    <dd>
+    Получить объект пригодный для отображения с данными о существах на карте
+
+
+
+    <h3>Returns:</h3>
+    <ol>
+
+        объект matrix в узлах которого символы для отображения
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "getShadowView"></a>
+    <strong>getShadowView ()</strong>
+    </dt>
+    <dd>
+    Получить объект пригодный для отображения с данными о затененности карты
+
+
+
+    <h3>Returns:</h3>
+    <ol>
+
+        объект matrix в узлах которого символы для отображения
+    </ol>
+
+
+
+
+</dd>
+</dl>
+
+
+</div> <!-- id="content" -->
+</div> <!-- id="main" -->
+<div id="about">
+<i>generated by <a href="http://github.com/stevedonovan/LDoc">LDoc 1.4.6</a></i>
+<i style="float:right;">Last updated 2017-11-24 12:23:26 </i>
+</div> <!-- id="about" -->
+</div> <!-- id="container" -->
+</body>
+</html>

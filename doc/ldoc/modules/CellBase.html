@@ -1,0 +1,662 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+<head>
+    <title>Reference</title>
+    <link rel="stylesheet" href="../ldoc.css" type="text/css" />
+</head>
+<body>
+
+<div id="container">
+
+<div id="product">
+	<div id="product_logo"></div>
+	<div id="product_name"><big><b></b></big></div>
+	<div id="product_description"></div>
+</div> <!-- id="product" -->
+
+
+<div id="main">
+
+
+<!-- Menu -->
+
+<div id="navigation">
+<br/>
+<h1>ldoc</h1>
+
+<ul>
+  <li><a href="../index.html">Index</a></li>
+</ul>
+
+<h2>Contents</h2>
+<ul>
+<li><a href="#Functions">Functions</a></li>
+</ul>
+
+
+<h2>Modules</h2>
+<ul class="nowrap">
+  <li><strong>CellBase</strong></li>
+  <li><a href="../modules/Map.html">Map</a></li>
+  <li><a href="../modules/World.html">World</a></li>
+</ul>
+
+</div>
+
+<div id="content">
+
+<h1>Module <code>CellBase</code></h1>
+<p>Базовый класс, описывающий ячейку на карте игрового мира</p>
+<p></p>
+
+
+<h2><a href="#Functions">Functions</a></h2>
+<table class="function_list">
+	<tr>
+	<td class="name" nowrap><a href="#Base:init">Base:init (data)</a></td>
+	<td class="summary">Конструктор</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#Base:setPosition">Base:setPosition (x, y)</a></td>
+	<td class="summary">Установить координаты тайла</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#Base:getX">Base:getX ()</a></td>
+	<td class="summary">Получить Х-координату тайла</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#Base:getY">Base:getY ()</a></td>
+	<td class="summary">Получить У-координату тайла</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#Base:getPosition">Base:getPosition ()</a></td>
+	<td class="summary">Получить координаты тайла</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#Base:getName">Base:getName ()</a></td>
+	<td class="summary">Получить имя тайла</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#Base:isWalkable">Base:isWalkable ()</a></td>
+	<td class="summary">Проверка, является ли тайл проходимым</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#Base:isTransparent">Base:isTransparent ()</a></td>
+	<td class="summary">Проверка, является ли тайл прозрачным</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#Base:isExplored">Base:isExplored ()</a></td>
+	<td class="summary">Проверка, разведан ли тайл</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#Base:isShaded">Base:isShaded ()</a></td>
+	<td class="summary">Проверка, затенен ли тайл</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#Base:getType">Base:getType ()</a></td>
+	<td class="summary">Получить тип тайла</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#Base:isType">Base:isType (tiletype)</a></td>
+	<td class="summary">Сравнить тип тайла с эталонным</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#Base:getMsg">Base:getMsg ()</a></td>
+	<td class="summary">Получить сообщение при нахождении в тайле</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#Base:isCreature">Base:isCreature ()</a></td>
+	<td class="summary">Проверка, есть ли существо в тайле</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#Base:getCreature">Base:getCreature ()</a></td>
+	<td class="summary">Получить существо находящееся в тайле</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#Base:setCreature">Base:setCreature (creature)</a></td>
+	<td class="summary">Установить существо в тайл</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#Base:removeCreature">Base:removeCreature ()</a></td>
+	<td class="summary">Удалить существо из тайла</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#Base:isObject">Base:isObject ()</a></td>
+	<td class="summary">Проверка, есть ли в тайле объект</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#Base:getObject">Base:getObject ()</a></td>
+	<td class="summary">Получить объект из тайла</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#Base:setObject">Base:setObject (object)</a></td>
+	<td class="summary">Установить объект в тайл</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#Base:removeObject">Base:removeObject ()</a></td>
+	<td class="summary">Удалить объект из тайла</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#Base:explore">Base:explore ()</a></td>
+	<td class="summary">Пометить тайл как разведаный</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#Base:forget">Base:forget ()</a></td>
+	<td class="summary">Пометить тайл как не разведаный</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#Base:illuminate">Base:illuminate ()</a></td>
+	<td class="summary">Пометить тайл как освещенный (видимый)</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#Base:obscure">Base:obscure ()</a></td>
+	<td class="summary">Пометить тайл как затененный</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#Base:canCreature">Base:canCreature ()</a></td>
+	<td class="summary">Проверка, может ли существо встать в тайл</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#Base:canObject">Base:canObject ()</a></td>
+	<td class="summary">Проверка, может ли объект встать в тайл</td>
+	</tr>
+</table>
+
+<br/>
+<br/>
+
+
+    <h2 class="section-header "><a name="Functions"></a>Functions</h2>
+
+    <dl class="function">
+    <dt>
+    <a name = "Base:init"></a>
+    <strong>Base:init (data)</strong>
+    </dt>
+    <dd>
+    Конструктор
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">data</span> таблица со всеми инициализирующими значениями:
+        <ul>
+        <li><span class="parameter">ID</span>
+         уникальный числовой идентификатор ячейки
+        </li>
+        <li><span class="parameter">x</span>
+         х-координата ячейки (необязательный параметр)
+        </li>
+        <li><span class="parameter">y</span>
+         у-координата ячейки (необязательный параметр)
+        </li>
+        <li><span class="parameter">name</span>
+         имя тайла
+        </li>
+        <li><span class="parameter">tiletype</span>
+         тип тайла, специфичный для некоторого набора - напремер все двери будут иметь одинаковый tiletype
+        </li>
+        <li><span class="parameter">tile</span>
+         тайл, в таком виде, как он должен парситься из строки с картой - одиночный символ
+        </li>
+        <li><span class="parameter">standmsg</span>
+         сообщение, которое будет отображаться, когда персонаж игрока будет заходить на данный тайл (необязательный параметр)
+        </li>
+        <li><span class="parameter">walkable</span>
+         является ли тайл проходимым
+        </li>
+        <li><span class="parameter">transparent</span>
+         является ли тайл прозрачным
+        </li>
+        <li><span class="parameter">explored</span>
+         исследован ли тайл (по умолчанию false)
+        </li>
+        <li><span class="parameter">shaded</span>
+         затенен ли тайл (по умолчанию true)
+        </li>
+        <li><span class="parameter">cancreature</span>
+         может ли на тайл вставать существо
+        </li>
+        <li><span class="parameter">canobject</span>
+         может ли на тайле находиться игровой предмет
+        </li>
+        </li></ul>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "Base:setPosition"></a>
+    <strong>Base:setPosition (x, y)</strong>
+    </dt>
+    <dd>
+    Установить координаты тайла
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">x</span>
+         Х-координата
+        </li>
+        <li><span class="parameter">y</span>
+         У-координата
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "Base:getX"></a>
+    <strong>Base:getX ()</strong>
+    </dt>
+    <dd>
+    Получить Х-координату тайла
+
+
+
+    <h3>Returns:</h3>
+    <ol>
+
+        Х-координата
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "Base:getY"></a>
+    <strong>Base:getY ()</strong>
+    </dt>
+    <dd>
+    Получить У-координату тайла
+
+
+
+    <h3>Returns:</h3>
+    <ol>
+
+        У-координата
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "Base:getPosition"></a>
+    <strong>Base:getPosition ()</strong>
+    </dt>
+    <dd>
+    Получить координаты тайла
+
+
+
+    <h3>Returns:</h3>
+    <ol>
+        <li>
+        Х-координата</li>
+        <li>
+        У-координата</li>
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "Base:getName"></a>
+    <strong>Base:getName ()</strong>
+    </dt>
+    <dd>
+    Получить имя тайла
+
+
+
+    <h3>Returns:</h3>
+    <ol>
+
+        имя тайла, заданое в конструкторе в параметре data.name
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "Base:isWalkable"></a>
+    <strong>Base:isWalkable ()</strong>
+    </dt>
+    <dd>
+    Проверка, является ли тайл проходимым
+
+
+
+    <h3>Returns:</h3>
+    <ol>
+
+        true если тайл задан как проходимый в параметре data.walkable
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "Base:isTransparent"></a>
+    <strong>Base:isTransparent ()</strong>
+    </dt>
+    <dd>
+    Проверка, является ли тайл прозрачным
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "Base:isExplored"></a>
+    <strong>Base:isExplored ()</strong>
+    </dt>
+    <dd>
+    Проверка, разведан ли тайл
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "Base:isShaded"></a>
+    <strong>Base:isShaded ()</strong>
+    </dt>
+    <dd>
+    Проверка, затенен ли тайл
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "Base:getType"></a>
+    <strong>Base:getType ()</strong>
+    </dt>
+    <dd>
+    Получить тип тайла
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "Base:isType"></a>
+    <strong>Base:isType (tiletype)</strong>
+    </dt>
+    <dd>
+    Сравнить тип тайла с эталонным
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">tiletype</span>
+
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "Base:getMsg"></a>
+    <strong>Base:getMsg ()</strong>
+    </dt>
+    <dd>
+    Получить сообщение при нахождении в тайле
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "Base:isCreature"></a>
+    <strong>Base:isCreature ()</strong>
+    </dt>
+    <dd>
+    Проверка, есть ли существо в тайле
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "Base:getCreature"></a>
+    <strong>Base:getCreature ()</strong>
+    </dt>
+    <dd>
+    Получить существо находящееся в тайле
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "Base:setCreature"></a>
+    <strong>Base:setCreature (creature)</strong>
+    </dt>
+    <dd>
+    Установить существо в тайл
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">creature</span>
+
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "Base:removeCreature"></a>
+    <strong>Base:removeCreature ()</strong>
+    </dt>
+    <dd>
+    Удалить существо из тайла
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "Base:isObject"></a>
+    <strong>Base:isObject ()</strong>
+    </dt>
+    <dd>
+    Проверка, есть ли в тайле объект
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "Base:getObject"></a>
+    <strong>Base:getObject ()</strong>
+    </dt>
+    <dd>
+    Получить объект из тайла
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "Base:setObject"></a>
+    <strong>Base:setObject (object)</strong>
+    </dt>
+    <dd>
+    Установить объект в тайл
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">object</span>
+
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "Base:removeObject"></a>
+    <strong>Base:removeObject ()</strong>
+    </dt>
+    <dd>
+    Удалить объект из тайла
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "Base:explore"></a>
+    <strong>Base:explore ()</strong>
+    </dt>
+    <dd>
+    Пометить тайл как разведаный
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "Base:forget"></a>
+    <strong>Base:forget ()</strong>
+    </dt>
+    <dd>
+    Пометить тайл как не разведаный
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "Base:illuminate"></a>
+    <strong>Base:illuminate ()</strong>
+    </dt>
+    <dd>
+    Пометить тайл как освещенный (видимый)
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "Base:obscure"></a>
+    <strong>Base:obscure ()</strong>
+    </dt>
+    <dd>
+    Пометить тайл как затененный
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "Base:canCreature"></a>
+    <strong>Base:canCreature ()</strong>
+    </dt>
+    <dd>
+    Проверка, может ли существо встать в тайл
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "Base:canObject"></a>
+    <strong>Base:canObject ()</strong>
+    </dt>
+    <dd>
+    Проверка, может ли объект встать в тайл
+
+
+
+
+
+
+
+</dd>
+</dl>
+
+
+</div> <!-- id="content" -->
+</div> <!-- id="main" -->
+<div id="about">
+<i>generated by <a href="http://github.com/stevedonovan/LDoc">LDoc 1.4.6</a></i>
+<i style="float:right;">Last updated 2017-11-24 12:23:26 </i>
+</div> <!-- id="about" -->
+</div> <!-- id="container" -->
+</body>
+</html>

@@ -1,0 +1,377 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+<head>
+    <title>Reference</title>
+    <link rel="stylesheet" href="../ldoc.css" type="text/css" />
+</head>
+<body>
+
+<div id="container">
+
+<div id="product">
+	<div id="product_logo"></div>
+	<div id="product_name"><big><b></b></big></div>
+	<div id="product_description"></div>
+</div> <!-- id="product" -->
+
+
+<div id="main">
+
+
+<!-- Menu -->
+
+<div id="navigation">
+<br/>
+<h1>ldoc</h1>
+
+<ul>
+  <li><a href="../index.html">Index</a></li>
+</ul>
+
+<h2>Contents</h2>
+<ul>
+<li><a href="#Functions">Functions</a></li>
+</ul>
+
+
+<h2>Modules</h2>
+<ul class="nowrap">
+  <li><a href="../modules/CellBase.html">CellBase</a></li>
+  <li><strong>Map</strong></li>
+  <li><a href="../modules/World.html">World</a></li>
+</ul>
+
+</div>
+
+<div id="content">
+
+<h1>Module <code>Map</code></h1>
+<p>Модуль представляющий карту игрового мира</p>
+<p> Позволяет получать лоступ к отдельным ячейкам на карте, а так же определять
+ возможность пройти из одной ячейки в другую и видимость между ячейками</p>
+
+
+<h2><a href="#Functions">Functions</a></h2>
+<table class="function_list">
+	<tr>
+	<td class="name" nowrap><a href="#init">init ()</a></td>
+	<td class="summary">Конструктор</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#setSize">setSize (x, y)</a></td>
+	<td class="summary">Установить размер карты</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#setCell">setCell (x, y, cell)</a></td>
+	<td class="summary">Установить ячейку в указанную точку на карте</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#getCell">getCell (x, y)</a></td>
+	<td class="summary">Получить ячейку по указанным координатам</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#isWalkableBetween">isWalkableBetween (srcX, srcY, distX, distY)</a></td>
+	<td class="summary">Проверка, возможно ли пройти между указанными точками</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#isVisibleBetween">isVisibleBetween (srcX, srcY, distX, distY)</a></td>
+	<td class="summary">Проверка, просматриваема ли точка dist из точки src</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#getNeighbors">getNeighbors (x, y, diags)</a></td>
+	<td class="summary">Получить список всех соседних точек для заданой</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#checkRectangle">checkRectangle (left, right, top, bottom)</a></td>
+	<td class="summary">Проверка, что прямоугольник полностью вписывается в границы карты</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#getCellList">getCellList (left, right, top, bottom)</a></td>
+	<td class="summary">Получить список всех ячеек внутри прямоугольника</td>
+	</tr>
+</table>
+
+<br/>
+<br/>
+
+
+    <h2 class="section-header "><a name="Functions"></a>Functions</h2>
+
+    <dl class="function">
+    <dt>
+    <a name = "init"></a>
+    <strong>init ()</strong>
+    </dt>
+    <dd>
+    Конструктор
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "setSize"></a>
+    <strong>setSize (x, y)</strong>
+    </dt>
+    <dd>
+    Установить размер карты
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">x</span>
+         размер по горизонтали
+        </li>
+        <li><span class="parameter">y</span>
+         размер по вертикали
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "setCell"></a>
+    <strong>setCell (x, y, cell)</strong>
+    </dt>
+    <dd>
+    Установить ячейку в указанную точку на карте
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">x</span>
+         X-координата
+        </li>
+        <li><span class="parameter">y</span>
+         Y-координата
+        </li>
+        <li><span class="parameter">cell</span>
+         ячейка, которую нужно установить
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "getCell"></a>
+    <strong>getCell (x, y)</strong>
+    </dt>
+    <dd>
+    Получить ячейку по указанным координатам
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">x</span>
+         X-координата
+        </li>
+        <li><span class="parameter">y</span>
+         Y-координата
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+        объект ячейки
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "isWalkableBetween"></a>
+    <strong>isWalkableBetween (srcX, srcY, distX, distY)</strong>
+    </dt>
+    <dd>
+    Проверка, возможно ли пройти между указанными точками
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">srcX</span>
+         X-координата точки отправления
+        </li>
+        <li><span class="parameter">srcY</span>
+         Y-координата точки отправления
+        </li>
+        <li><span class="parameter">distX</span>
+         X-координата точки назначения
+        </li>
+        <li><span class="parameter">distY</span>
+         Y-координата точки назначения
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+        <li>
+        true если возможно пройти между точками, иначе false</li>
+        <li>
+        список объектов cell вдоль маршрута для прохода между точками отправления и назначения (без точки src)</li>
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "isVisibleBetween"></a>
+    <strong>isVisibleBetween (srcX, srcY, distX, distY)</strong>
+    </dt>
+    <dd>
+    Проверка, просматриваема ли точка dist из точки src
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">srcX</span>
+         X-координата точки отправления
+        </li>
+        <li><span class="parameter">srcY</span>
+         Y-координата точки отправления
+        </li>
+        <li><span class="parameter">distX</span>
+         X-координата точки назначения
+        </li>
+        <li><span class="parameter">distY</span>
+         Y-координата точки назначения
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+        <li>
+        true если между точками есть прямая видимость, иначе false</li>
+        <li>
+        список объектов cell видимых вдоль луча зрения от точки src до точки dist (без точки src)</li>
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "getNeighbors"></a>
+    <strong>getNeighbors (x, y, diags)</strong>
+    </dt>
+    <dd>
+    Получить список всех соседних точек для заданой
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">x</span>
+         X-координата
+        </li>
+        <li><span class="parameter">y</span>
+         Y-координата
+        </li>
+        <li><span class="parameter">diags</span>
+         нужно ли рассматривать соседей по диагонали. Если нужно - должно быть установлено в true. По
+ умолчанию false
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+        список объектов cell, являющихся соседями заданой точки
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "checkRectangle"></a>
+    <strong>checkRectangle (left, right, top, bottom)</strong>
+    </dt>
+    <dd>
+    Проверка, что прямоугольник полностью вписывается в границы карты
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">left</span>
+         Х-координата левого края прямоугольника
+        </li>
+        <li><span class="parameter">right</span>
+         Х-координата правого края прямоугольника
+        </li>
+        <li><span class="parameter">top</span>
+         Y-координата верхнего края прямоугольника
+        </li>
+        <li><span class="parameter">bottom</span>
+         Y-координата нижнего края прямоугольника
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+        true если прямоугольник вписывается в размеры карты, иначе false
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "getCellList"></a>
+    <strong>getCellList (left, right, top, bottom)</strong>
+    </dt>
+    <dd>
+    Получить список всех ячеек внутри прямоугольника  Если размеры прямоугольника не заданы - то возвращается список всех ячеек на карте
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">left</span>
+         Х-координата левого края прямоугольника, по умолчанию 1
+        </li>
+        <li><span class="parameter">right</span>
+         Х-координата правого края прямоугольника, по умолчанию размер карты по горизонтали
+        </li>
+        <li><span class="parameter">top</span>
+         Y-координата верхнего края прямоугольника, по умолчанию 1
+        </li>
+        <li><span class="parameter">bottom</span>
+         Y-координата нижнего края прямоугольника, по умолчанию размер карты по вертикали
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+        список объектов cell, попадающих внутрь заданного прямоугольника
+    </ol>
+
+
+
+
+</dd>
+</dl>
+
+
+</div> <!-- id="content" -->
+</div> <!-- id="main" -->
+<div id="about">
+<i>generated by <a href="http://github.com/stevedonovan/LDoc">LDoc 1.4.6</a></i>
+<i style="float:right;">Last updated 2017-11-24 12:23:26 </i>
+</div> <!-- id="about" -->
+</div> <!-- id="container" -->
+</body>
+</html>

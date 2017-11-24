@@ -30,6 +30,10 @@ function Matrix:getHeight()
 end
 
 function Matrix:get(x, y)
+    if not self:isInRange(x, y) then
+        error("Out of range " .. tostring(x) .. ":" .. tostring(y), 0)
+    end
+
     return self.values[(x - 1) * self.width + y]
 end
 
@@ -43,7 +47,7 @@ end
 
 function Matrix:isInRange(x, y)
     if x < 1 or x > self.width or
-    y < 1 or y > self.height then
+            y < 1 or y > self.height then
         return false
     else
         return true
